@@ -70,9 +70,23 @@ public class TaskConfMetrics {
 		this.missingCompletitions += metritask.getMissingCompletitions();
 		this.internalFailure += metritask.getInternalFailure();
 	}
-	
-	public String toString(){
-		return this.unsoundExecutions+" "+this.interruptedExecutions+" "+this.missingCompletitions+" "+ this.internalFailure;
+
+	public boolean isEmpty(){
+		if(unsoundExecutions>0 || interruptedExecutions>0 ||
+			internalFailure>0 || missingCompletitions>0){
+			return false;
+		}
+		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "TaskConfMetrics [unsoundExecutions=" + unsoundExecutions
+				+ ", interruptedExecutions=" + interruptedExecutions
+				+ ", missingCompletitions=" + missingCompletitions
+				+ ", internalFailure=" + internalFailure + "]";
+	}
+	
+	
 	
 }

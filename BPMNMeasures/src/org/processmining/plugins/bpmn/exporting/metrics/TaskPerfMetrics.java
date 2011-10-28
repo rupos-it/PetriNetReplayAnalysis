@@ -36,6 +36,12 @@ public class TaskPerfMetrics {
 				+ ", executionTime=" + executionTime + "]";
 	}
 
+	public boolean isEmpty(){
+		if(executionTime>0 || activationTime>0){
+			return false;
+		}
+		return true;
+	}
 	public void updateMetric(TaskPerfMetrics taskmetric) {
 		this.activationTime += taskmetric.getActivationTime();
 		this.executionTime += taskmetric.getExecutionTime();

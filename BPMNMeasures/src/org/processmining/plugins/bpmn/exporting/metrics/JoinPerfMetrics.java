@@ -6,6 +6,7 @@ import java.util.Map;
 public class JoinPerfMetrics {
 
 	Map<String, Float> synchronizationTime; //  NomeNodoEntrante => Tempo di sincronizzazione
+	//String rappresenta il nome dei nodi connessi dall'arco
 
 	
 	public JoinPerfMetrics() {

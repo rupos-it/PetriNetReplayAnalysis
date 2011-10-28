@@ -159,7 +159,7 @@ public class MeasuresBPMNintoMetricsPlugin {
 				}
 				String label = activity.getLabel();
 
-				if (activity != null) {
+				if (activity != null && !metritask.isEmpty()) {
 
 
 
@@ -312,9 +312,9 @@ public class MeasuresBPMNintoMetricsPlugin {
 					}
 					String label = activity.getLabel();
 
-					if (activity != null) {
+					if (activity != null && !taskmetric.isEmpty()) {
 
-
+						
 						if(!metric.getTaskMetrics().containsKey(label)){
 
 							metric.addTaskMetrics(label, taskmetric);

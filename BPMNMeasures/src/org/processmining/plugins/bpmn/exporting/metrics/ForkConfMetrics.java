@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class ForkConfMetrics {
 	Map<String, Integer> interruptedBranches; // nodo uscente in cui si è fermata l'esecuzione
+	//String rappresenta il nome dei nodi connessi dall'arco
 
 	
 	
