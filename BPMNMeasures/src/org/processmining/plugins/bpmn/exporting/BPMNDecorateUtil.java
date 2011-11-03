@@ -91,7 +91,7 @@ public class BPMNDecorateUtil {
 		Map<Activity, String> MapActivity = new HashMap<Activity, String>();
 
 		for (Transition t : net.getTransitions()) {
-			if (!t.isInvisible()) {
+			if (!t.isInvisible() &&  !t.getLabel().startsWith("ArtificialEnd")) {
 				String tname = t.getLabel();
 				String name = (String) tname.subSequence(0, tname.indexOf("+"));
 				Activity activity = null;
