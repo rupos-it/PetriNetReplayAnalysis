@@ -45,6 +45,18 @@ public class AddEndTransitionVariantPlugin extends AddEndTransitionPlugin {
 
 		return result;
 	}
+	
+	@Plugin(name = "Add Artificial End Transition Variant", parameterLabels = { "PetriNet", "Name End Transition" }, returnLabels = { "PetriNet", "Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
+	public Object addVariantTransition(PluginContext context, Petrinet oldnet, String name){
+
+		Object[]  result =  (Object[]) this.addTransition(context, oldnet,name);
+		
+		Petrinet net = (Petrinet) result[0];
+
+		this.fixconnection(context, oldnet, net);
+
+		return result;
+	}
 
 	private void fixconnection(PluginContext context, Petrinet oldnet,
 			Petrinet net) {

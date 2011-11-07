@@ -22,7 +22,7 @@ import org.processmining.models.semantics.petrinet.Marking;
 
 
 
-@Plugin(name = "Add Artificial End Transition", parameterLabels = { "PetriNet" }, returnLabels = { "PetriNet","Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
+@Plugin(name = "Add Artificial End Transition", parameterLabels = { "PetriNet","Name End Transition" }, returnLabels = { "PetriNet","Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
 public class AddEndTransitionPlugin {
 
 	
@@ -30,6 +30,13 @@ public class AddEndTransitionPlugin {
 	@UITopiaVariant(affiliation = "UNIPI", author = "GOs", email = "")
 	public Object addTransition(PluginContext context, Petrinet oldnet){
 		
+		return  this.addTransition(context, oldnet, "ArtificialEnd");
+		
+	}
+
+	@PluginVariant(requiredParameterLabels = { 0,1 })
+	public Object addTransition(PluginContext context, Petrinet oldnet, String name){
+		name = name.replaceAll ("[ \\p{Punct}]", "");
 		Marking oldmarking=null;
 
 		try {
@@ -49,8 +56,8 @@ public class AddEndTransitionPlugin {
 		for(Place p : net.getPlaces()){
 			//questa è il place finale
 			if(p.getGraph().getOutEdges(p).size()==0){
-				Transition t = net.addTransition("ArtificialEnd+complete", subNet);
-				Place place = net.addPlace("ArtificialEnd", subNet);
+				Transition t = net.addTransition(name+"complete", subNet);
+				Place place = net.addPlace(name, subNet);
 				net.addArc(t, place, 1, subNet);
 				net.addArc(p, t, 1, subNet);
 			}
@@ -78,7 +85,6 @@ public class AddEndTransitionPlugin {
 		
 		return result;
 	}
-
 	
 	
 }
