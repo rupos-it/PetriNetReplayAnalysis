@@ -22,13 +22,13 @@ import org.processmining.models.semantics.petrinet.Marking;
 
 
 
-@Plugin(name = "Add Artificial End Transition", parameterLabels = { "PetriNet" }, returnLabels = { "PetriNet" }, returnTypes = { Petrinet.class })
+@Plugin(name = "Add Artificial End Transition", parameterLabels = { "PetriNet" }, returnLabels = { "PetriNet","Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
 public class AddEndTransitionPlugin {
 
 	
 	@PluginVariant(requiredParameterLabels = { 0 })
 	@UITopiaVariant(affiliation = "UNIPI", author = "GOs", email = "")
-	public Petrinet addTransition(PluginContext context, Petrinet oldnet){
+	public Object addTransition(PluginContext context, Petrinet oldnet){
 		
 		Marking oldmarking=null;
 
@@ -72,9 +72,11 @@ public class AddEndTransitionPlugin {
 		context.addConnection(new InitialMarkingConnection(net, newmarking));
 
 		
+		Object[] result = new Object[2];
+		result[0] = net;
+		result[1] = newmarking;
 		
-		
-		return net;
+		return result;
 	}
 
 	

@@ -18,8 +18,11 @@ import org.processmining.models.graphbased.directed.bpmn.BPMNDiagram;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 
 import org.processmining.models.graphbased.directed.petrinet.elements.Place;
+import org.processmining.models.semantics.petrinet.Marking;
 
 import org.processmining.plugins.bpmn.BPMNtoPNConnection;
+
+
 
 
 
@@ -30,15 +33,17 @@ public class AddEndTransitionVariantPlugin extends AddEndTransitionPlugin {
 
 
 	//@PluginVariant(requiredParameterLabels = { 0 },variantLabel="variant")
-	@Plugin(name = "Add Artificial End Transition Variant", parameterLabels = { "PetriNet" }, returnLabels = { "PetriNet" }, returnTypes = { Petrinet.class })
+	@Plugin(name = "Add Artificial End Transition Variant", parameterLabels = { "PetriNet" }, returnLabels = { "PetriNet", "Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
 	@UITopiaVariant(affiliation = "UNIPI", author = "GOs", email = "")
-	public Petrinet addVariantTransition(PluginContext context, Petrinet oldnet){
+	public Object addVariantTransition(PluginContext context, Petrinet oldnet){
 
-		Petrinet net =  this.addTransition(context, oldnet);
+		Object[]  result =  (Object[]) this.addTransition(context, oldnet);
+		
+		Petrinet net = (Petrinet) result[0];
 
 		this.fixconnection(context, oldnet, net);
 
-		return net;
+		return result;
 	}
 
 	private void fixconnection(PluginContext context, Petrinet oldnet,
