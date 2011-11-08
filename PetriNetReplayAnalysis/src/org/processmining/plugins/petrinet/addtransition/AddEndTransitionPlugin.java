@@ -56,7 +56,7 @@ public class AddEndTransitionPlugin {
 		for(Place p : net.getPlaces()){
 			//questa è il place finale
 			if(p.getGraph().getOutEdges(p).size()==0){
-				Transition t = net.addTransition(name+"complete", subNet);
+				Transition t = net.addTransition(name+"+complete", subNet);
 				Place place = net.addPlace(name, subNet);
 				net.addArc(t, place, 1, subNet);
 				net.addArc(p, t, 1, subNet);
