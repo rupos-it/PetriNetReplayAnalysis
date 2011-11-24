@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import java.util.Map;
-import java.util.Vector;
+
 
 
 import org.processmining.models.graphbased.AttributeMap;
@@ -356,7 +356,7 @@ public class BPMNDecorateUtil {
 						}
 					}
 					for (Place p : missing.baseSet()) {
-						if (p.getLabel().equals(name)) {
+						if (p.getLabel().equals(name)&& tname.endsWith("start")) {
 							unsoundallert += ret + " Task internal failures";
 						}
 						if(p.getLabel().endsWith(name)&& tname.endsWith("start")){

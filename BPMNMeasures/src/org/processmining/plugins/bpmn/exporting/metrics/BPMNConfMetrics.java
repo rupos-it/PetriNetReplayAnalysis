@@ -3,8 +3,6 @@ package org.processmining.plugins.bpmn.exporting.metrics;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.processmining.models.graphbased.directed.bpmn.elements.Activity;
-
 public class BPMNConfMetrics {
 	Map<String, TaskConfMetrics> taskMetrics;
 	Map<String, ForkConfMetrics> forkMetrics;

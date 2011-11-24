@@ -3,8 +3,6 @@ package org.processmining.plugins.bpmn.exporting.metrics;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.processmining.models.graphbased.directed.bpmn.elements.Activity;
-
 public class BPMNPerfMetrics {
 	Map<String, TaskPerfMetrics> taskMetrics;
 	Map<String, JoinPerfMetrics> joinMetrics;
@@ -56,7 +54,7 @@ public class BPMNPerfMetrics {
 	public String toString(){
 		String task = taskMetrics.toString();
 		String join = joinMetrics.toString();
-		return "NomeTraccia "+TraceName+"\n"+task+"\n"+join+"\n\n";
+		return "NomeTraccia "+TraceName+"\n"+task+"\n"+join+"\n\n<br/>";
 		
 	}
 	
