@@ -28,8 +28,9 @@ public class BPMNMetricVisualizer {
 	@PluginVariant(requiredParameterLabels = { 0 })
 	public static <E> JComponent visualize(PluginContext context, LinkedList<E> metrics) {
 		
-				
-		return visualizestring(metrics.toString());
+		String visualizze = metrics.toString().replace("/n", "<br/>");
+		return visualizestring("<html>"+visualizze+"</html>");
+		
 	
 	}
 	
