@@ -24,7 +24,7 @@ import org.processmining.framework.plugin.annotations.Plugin;
 public class LogAddEvent {
 
 	@Plugin(name = "Add End Artificial Events", parameterLabels = { "Log" }, returnLabels = { "Altered log" }, returnTypes = { XLog.class }, userAccessible = true, help = "Adds an artificial  end task to every trace in the log file")
-	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", website = "")
+	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public XLog addEvents(PluginContext context, XLog oldLog) {
 
 
