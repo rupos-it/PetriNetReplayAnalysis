@@ -27,7 +27,7 @@ public class AddEndTransitionPlugin {
 
 	
 	@PluginVariant(requiredParameterLabels = { 0 })
-	@UITopiaVariant(affiliation = "UNIPI", author = "GOs", email = "")
+	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", website = "")
 	public Object addTransition(PluginContext context, Petrinet oldnet){
 		
 		return  this.addTransition(context, oldnet, "ArtificialEnd");

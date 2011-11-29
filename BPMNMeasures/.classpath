@@ -59,10 +59,10 @@
 	<classpathentry kind="lib" path="stdlib/ProM-Plugins.jar"/> 
 	<classpathentry kind="lib" path="packagelib/Log.jar"/>
 	<classpathentry kind="lib" path="packagelib/LogDialog.jar"/>
-	<classpathentry kind="lib" path="packagelib/PetriNetReplayAnalysis"/>
-	<classpathentry kind="lib" path="packagelib/PetriNets"/>
-	<classpathentry kind="lib" path="packagelib/BPMN"/>
+	<classpathentry kind="lib" path="packagelib/PetriNetReplayAnalysis.jar"/>
+	<classpathentry kind="lib" path="packagelib/PetriNets.jar"/>
+	<classpathentry kind="lib" path="packagelib/BPMN.jar"/>
 	<classpathentry kind="lib" path="lib/saxon9he.jar"/>
-	<classpathentry kind="lib" path="packagelib/PetriNetReplayer"/>
+	<classpathentry kind="lib" path="packagelib/PetriNetReplayer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
