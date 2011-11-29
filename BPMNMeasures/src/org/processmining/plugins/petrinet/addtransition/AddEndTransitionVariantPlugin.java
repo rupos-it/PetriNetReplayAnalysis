@@ -11,7 +11,7 @@ import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 
 import org.processmining.framework.plugin.annotations.Plugin;
-import org.processmining.framework.plugin.annotations.PluginVariant;
+
 import org.processmining.framework.plugin.events.Logger.MessageLevel;
 
 import org.processmining.models.graphbased.directed.bpmn.BPMNDiagram;
