@@ -3,7 +3,7 @@ package org.processmining.tests.bpmnrupos;
 import org.junit.Test;
 import org.processmining.contexts.cli.CLI;
 import org.processmining.contexts.test.PromTest;
-import org.processmining.tests.bpmn.BPMNTest;
+
 
 public class BPMNRuposTest  extends PromTest {
 
