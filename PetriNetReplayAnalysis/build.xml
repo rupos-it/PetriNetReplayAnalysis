@@ -131,10 +131,12 @@
 							logo="http://www.promtools.org/prom6/packages/prom_subtitle_hat_300.png"
 						>
 							<dependency name="Log"/>
+							<dependency name="InteractiveVisualization"/>
 							<dependency name="LogDialog"/>
 							<dependency name="LogMerge"/>
 							<dependency name="PetriNets"/>
 							<dependency name="PetriNetsReplayer"/>
+							
 						</package>
 					</packages>
 				</echoxml>

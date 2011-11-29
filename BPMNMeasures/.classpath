@@ -56,7 +56,7 @@
 	<classpathentry kind="lib" path="stdlib/ProM-Contexts.jar"/>
 	<classpathentry kind="lib" path="stdlib/ProM-Framework.jar"/>
 	<classpathentry kind="lib" path="stdlib/ProM-Models.jar"/>
-	<classpathentry kind="lib" path="stdlib/ProM-Plugins.jar"/> 
+	<classpathentry kind="lib" path="stdlib/ProM-Plugins.jar"/>
 	<classpathentry kind="lib" path="packagelib/Log.jar"/>
 	<classpathentry kind="lib" path="packagelib/LogDialog.jar"/>
 	<classpathentry kind="lib" path="packagelib/PetriNetReplayAnalysis.jar"/>
@@ -64,5 +64,6 @@
 	<classpathentry kind="lib" path="packagelib/BPMN.jar"/>
 	<classpathentry kind="lib" path="lib/saxon9he.jar"/>
 	<classpathentry kind="lib" path="packagelib/PetriNetReplayer.jar"/>
+	<classpathentry kind="lib" path="packagelib/InteractiveVisualization.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
