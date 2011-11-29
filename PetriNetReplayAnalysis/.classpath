@@ -60,7 +60,7 @@
 	<classpathentry kind="lib" path="stdlib/ProM-Models.jar"/>
 	<classpathentry kind="lib" path="stdlib/ProM-Plugins.jar"/>
 	<classpathentry kind="lib" path="packagelib/LogDialog.jar"/>
-	<classpathentry kind="lib" path="packagelib/LogMerge.jar"/>
 	<classpathentry kind="lib" path="packagelib/InteractiveVisualization.jar"/>
+	<classpathentry kind="lib" path="packagelib/LogMerge.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

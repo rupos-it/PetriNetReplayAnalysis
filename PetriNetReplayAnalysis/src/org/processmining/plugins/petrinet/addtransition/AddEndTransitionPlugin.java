@@ -1,6 +1,8 @@
 package org.processmining.plugins.petrinet.addtransition;
 
 
+import org.deckfour.uitopia.api.event.TaskListener.InteractionResult;
+import org.processmining.contexts.uitopia.UIPluginContext;
 import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
@@ -25,9 +27,24 @@ import org.processmining.models.semantics.petrinet.Marking;
 @Plugin(name = "Add Artificial End Transition", parameterLabels = { "PetriNet","Name End Transition" }, returnLabels = { "PetriNet","Initial Marking" }, returnTypes = { Petrinet.class, Marking.class })
 public class AddEndTransitionPlugin {
 
-	
 	@PluginVariant(requiredParameterLabels = { 0 })
 	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", website = "")
+	public Object addTransition(UIPluginContext context, Petrinet oldnet){
+		
+		AddEndTransitionPanel parameters = new AddEndTransitionPanel();
+		InteractionResult interActionResult = context.showConfiguration("Add artificial End Transition", parameters);
+		if (interActionResult.equals(InteractionResult.CANCEL)) {
+			context.getFutureResult(0).cancel(true);
+			return null;
+		}
+		
+		
+		return  this.addTransition(context, oldnet, parameters.getStopTaskName());
+		
+	}
+	
+	
+	@PluginVariant(requiredParameterLabels = { 0 })
 	public Object addTransition(PluginContext context, Petrinet oldnet){
 		
 		return  this.addTransition(context, oldnet, "ArtificialEnd");
@@ -60,6 +77,7 @@ public class AddEndTransitionPlugin {
 				Place place = net.addPlace(name, subNet);
 				net.addArc(t, place, 1, subNet);
 				net.addArc(p, t, 1, subNet);
+				break;
 			}
 		}
 		
