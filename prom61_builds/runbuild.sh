@@ -6,6 +6,7 @@ ant -f build_bpmn.xml clean
 ant -f  build_logdialog.xml clean
 ant -f  build_PNRA.xml clean
 ant -f  build_log.xml clean
+ant -f  build_logmerge.xml Clean
 ant -f  build_interactiveVisuali.xml clean
 ant -f  build_OSService.xml clean
 ant -f  build_petrinetsreplay.xml clean
@@ -19,6 +20,8 @@ ant -f  build_interactiveVisuali.xml
 ant -f  build_OSService.xml
 ant -f build_animation.xml
 ant -f  build_log.xml
+
+ant -f  build_logmerge.xml
 ant -f build_bpmn.xml
 ant -f  build_logdialog.xml
 

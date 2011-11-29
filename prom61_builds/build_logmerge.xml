@@ -1,4 +1,4 @@
-<project name="PetriNetReplayer" default="Compile Sources" basedir=".">
+<project name="LogMerge" default="Compile Sources" basedir="../prom61_origin/LogMerge">
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src" location="src" />
@@ -8,7 +8,7 @@
 		<property name="dist" location="dist" />
 		<property name="release" location="latestrelease" />
 		<property name="version" value="6.1.${env.BUILD_NUMBER}" />
-		<property name="project" value="PetriNetReplayAnalysis" />
+		<property name="project" value="LogMerge" />
 
 		<!-- Set the os to win32, win64, lin32, lin64, mac, or all -->
 		<property name="os" value="all" />
@@ -55,10 +55,10 @@
 						<include name="**" />
 						<exclude name="test**" />
 					</fileset>
-					<!-- <fileset dir="${doc}"> -->
-					<!-- 	<include name="**" /> -->
-					<!-- 	<exclude name="test**" /> -->
-					<!-- </fileset> -->
+					<fileset dir="${doc}">
+						<include name="**" />
+						<exclude name="test**" />
+					</fileset>
 					<manifest>
 						<attribute name="Built-By" value="${user.name}" />
 						<attribute name="Specification-Title" value="${project}-@{module}" />
@@ -76,7 +76,7 @@
 
 
 		<!-- clean all binaries and distributions -->
-		<target name="clean" description="clean up" id="1">
+		<target name="Clean" description="clean up" id="1">
 			<!-- Delete the ${build} and ${dist} directory trees -->
 			<delete dir="${build}" />
 			<delete dir="${dist}" />
@@ -122,19 +122,14 @@
 							version="${version}" 
 							os="all" 
 							url="http://www.promtools.org/prom6/packages/${project}/${project}-${version}-${os}.zip"
-							desc="Petri-net Replayer Analysis"
-							org="Dipartimento di Informatica University of Pisa" 
+							desc="Log Merge"
+							org="Ghent University" 
 							license="LGPL" 
-							author="R. Guanciale, G. Spagnolo et al."
+							author="Jan Claes"
 							auto="false"
 							hasPlugins="true"
 							logo="http://www.promtools.org/prom6/packages/prom_subtitle_hat_300.png"
 						>
-							<dependency name="Log"/>
-							<dependency name="LogDialog"/>
-							<dependency name="LogMerge"/>
-							<dependency name="PetriNets"/>
-							<dependency name="PetriNetsReplayer"/>
 						</package>
 					</packages>
 				</echoxml>
