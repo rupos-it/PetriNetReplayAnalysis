@@ -1,4 +1,4 @@
-<project name="BPMN" default="Compile Sources" basedir="../BPMNMeasures">
+<project name="BPMNMeasures" default="Compile Sources" basedir="../BPMNMeasures">
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src" location="src" />
@@ -131,6 +131,12 @@
 							logo="http://www.promtools.org/prom6/packages/6.1/prom_subtitle_hat_300.png"
 						>
 							<dependency name="Log"/>
+							<dependency name="InteractiveVisualization"/>
+							<dependency name="LogDialog"/>
+							<dependency name="LogMerge"/>
+							<dependency name="PetriNets"/>
+							<dependency name="PetriNetsReplayer"/>
+
 						</package>
 					</packages>
 				</echoxml>
