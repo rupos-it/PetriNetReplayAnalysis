@@ -81,7 +81,7 @@ public class BPMNtoPN {
 		Marking marking = new Marking();
 
 
-		//gli argchi del diagramma BPMN diventano piazze della rete BPMN
+		//gli archi del diagramma BPMN diventano piazze della rete BPMN
 		for (Flow g : bpmn.getFlows()) {
 			String f = g.getSource().getLabel();
 			String z = g.getTarget().getLabel();
