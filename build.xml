@@ -1,4 +1,4 @@
-<project name="PetriNetReplayer" default="Compile Sources" basedir=".">
+<project name="PetriNetReplayAnalysis" default="Compile Sources" basedir=".">
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src" location="src" />
@@ -55,10 +55,10 @@
 						<include name="**" />
 						<exclude name="test**" />
 					</fileset>
-					<!-- <fileset dir="${doc}"> -->
-					<!-- 	<include name="**" /> -->
-					<!-- 	<exclude name="test**" /> -->
-					<!-- </fileset> -->
+					<fileset dir="${doc}">
+						<include name="**" />
+						<exclude name="test**" />
+					</fileset>
 					<manifest>
 						<attribute name="Built-By" value="${user.name}" />
 						<attribute name="Specification-Title" value="${project}-@{module}" />
@@ -76,7 +76,7 @@
 
 
 		<!-- clean all binaries and distributions -->
-		<target name="clean" description="clean up" id="1">
+		<target name="Clean build and dist folders" description="clean up" id="1">
 			<!-- Delete the ${build} and ${dist} directory trees -->
 			<delete dir="${build}" />
 			<delete dir="${dist}" />
@@ -99,6 +99,9 @@
 		<target name="Create downloadable archive" depends="Compile Sources">
 			<echo message="Building zip file packaging this project" />
 			<sequential>
+				<delete includeEmptyDirs="true" quiet="true">
+			    	<fileset dir="${release}" includes="${project}-*-${os}.zip"/>
+			  	</delete>
 				<zip destfile="${release}/${project}-${version}-${os}.zip">
 					<zipfileset dir="${lib}" prefix="lib">
 						<include name="**" />
@@ -122,26 +125,27 @@
 							version="${version}" 
 							os="all" 
 							url="http://www.promtools.org/prom6/packages/${project}/${project}-${version}-${os}.zip"
-							desc="Petri-net Replayer Analysis"
-							org="Dipartimento di Informatica University of Pisa" 
+							desc="PetriNetReplayAnalysis"
+							org="University of Pisa" 
 							license="LGPL" 
-							author="R. Guanciale, G. Spagnolo et al."
+							author="Giorgio Spagnolo (spagnolo@di.unipi.it), Roberto Guanciale (guancio@gmail.com), et all."
 							auto="false"
 							hasPlugins="true"
 							logo="http://www.promtools.org/prom6/packages/prom_subtitle_hat_300.png"
 						>
-							<dependency name="Log"/>
+							<dependency name="PetriNets"/>
 							<dependency name="InteractiveVisualization"/>
 							<dependency name="LogDialog"/>
+							<dependency name="Log"/>
 							<dependency name="LogMerge"/>
-							<dependency name="PetriNets"/>
-							<dependency name="PetriNetsReplayer"/>
-							
+							<dependency name="PetriNetReplayer"/>
+
 						</package>
 					</packages>
 				</echoxml>
 			</sequential>
 		</target>
+
 
 		<target name="Compile Sources">
 			<!-- Create the build directory structure used by compile -->
