@@ -8,7 +8,7 @@
 		<property name="dist" location="dist" />
 		<property name="release" location="PetriNetReplayAnalysis" />
 		<property name="version" value="6.1.${env.BUILD_NUMBER}" />
-		<property name="project" value="NewPackage" />
+		<property name="project" value="PetriNetReplayAnalysis" />
 
 		<!-- Set the os to win32, win64, lin32, lin64, mac, or all -->
 		<property name="os" value="all" />
@@ -128,17 +128,25 @@
 							desc="PetriNetReplayAnalysis"
 							org="University of Pisa" 
 							license="LGPL" 
-							author="Giorgio Spagnolo (spagnolo@di.unipi.it)"
+							author="Giorgio Spagnolo (spagnolo@di.unipi.it), Roberto Guanciale (guancio@gmail.com), et all."
 							auto="false"
 							hasPlugins="true"
 							logo="http://www.promtools.org/prom6/packages/prom_subtitle_hat_300.png"
 						>
 							<dependency name="PetriNets"/>
+							<dependency name="InteractiveVisualization"/>
+							<dependency name="LogDialog"/>
+							<dependency name="Log"/>
+							<dependency name="LogMerge"/>
+							<dependency name="PetriNetReplayer"/>
+							<dependency name="PetriNets"/>
+
 						</package>
 					</packages>
 				</echoxml>
 			</sequential>
 		</target>
+
 
 		<target name="Compile Sources">
 			<!-- Create the build directory structure used by compile -->
