@@ -6,7 +6,7 @@
 		<property name="doc" location="doc" />
 		<property name="lib" location="lib" />
 		<property name="dist" location="dist" />
-		<property name="release" location="PetriNetReplayAnalysis" />
+		<property name="release" location="lastrelease" />
 		<property name="version" value="6.1.${env.BUILD_NUMBER}" />
 		<property name="project" value="PetriNetReplayAnalysis" />
 
