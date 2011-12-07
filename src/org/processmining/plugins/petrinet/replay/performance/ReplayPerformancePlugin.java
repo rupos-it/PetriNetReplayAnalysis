@@ -35,6 +35,7 @@ import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
+import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.AttributeMap;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -54,13 +55,13 @@ import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting;
 
-
+@Plugin(name = "PN Performance Analysis", parameterLabels = { "Log", "Petrinet", "ReplayFitnessSetting", "Marking" }, returnLabels = { "Result of Performance" }, returnTypes = { TotalPerformanceResult.class })
 public class ReplayPerformancePlugin {
 	
 	Map<Transition, XEventClass> map = null;
 	
-	@Plugin(name = "PerformanceDetailsSettings", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
-	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
+	@PluginVariant(requiredParameterLabels = { 0,1,2 }, variantLabel = "PerformanceDetailsSettings")
+	//@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalPerformanceResult getPerformanceDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting) {
 
 		Marking marking;
@@ -78,9 +79,9 @@ public class ReplayPerformancePlugin {
          return   getPerformanceDetails(context, log, net, setting,marking);
 	}
 
-	
-	@Plugin(name = "PerformanceDetailsSettingsWithMarking", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
-	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
+	@PluginVariant(requiredParameterLabels = { 0,1,2,3 }, variantLabel = "PerformanceDetailsSettingsWithMarking")
+	//@Plugin(name = "PerformanceDetailsSettingsWithMarking", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
+	//@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalPerformanceResult getPerformanceDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting,Marking marking ) {
 
 		
@@ -102,6 +103,8 @@ public class ReplayPerformancePlugin {
 				ReplayFitnessCost.addOperator);
 
 		int replayedTraces = 0;
+		   context.getProgress().setMinimum(0);
+	        context.getProgress().setMaximum(log.size());
 		for (XTrace trace : log) {
 			List<XEventClass> list = getList(trace, classes);
 			try {
@@ -111,6 +114,7 @@ public class ReplayPerformancePlugin {
 				String tracename = getTraceName(trace);
 				updatePerformance(net, marking, sequence, semantics, trace, performance, map, tracename);
 				replayedTraces++;
+                context.getProgress().inc();
 				System.out.println("Replayed");
 			} catch (Exception ex) {
 				System.out.println("Failed");
@@ -383,7 +387,8 @@ public class ReplayPerformancePlugin {
 
 
 	// Rupos public methos
-	@Plugin(name = "PerformanceDetailsUI", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
+	@PluginVariant(requiredParameterLabels = { 0,1}, variantLabel = "PerformanceDetailsUI")
+	//@Plugin(name = "PerformanceDetailsUI", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
 	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalPerformanceResult getPerformanceDetails(UIPluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
@@ -454,8 +459,8 @@ public class ReplayPerformancePlugin {
 
 		return total;
 	}
-
-	@Plugin(name = "PerformanceDetails", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
+	//@Plugin(name = "PerformanceDetails", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
+	@PluginVariant(requiredParameterLabels = { 0,1 }, variantLabel = "PerformanceDetails")
 	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalPerformanceResult getPerformanceDetails(PluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
