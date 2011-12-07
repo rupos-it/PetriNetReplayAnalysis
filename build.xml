@@ -139,7 +139,6 @@
 							<dependency name="Log"/>
 							<dependency name="LogMerge"/>
 							<dependency name="PetriNetReplayer"/>
-							<dependency name="PetriNets"/>
 
 						</package>
 					</packages>
