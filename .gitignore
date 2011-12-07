@@ -20,3 +20,4 @@ cobertura.ser
 bin-test
 bin-test-instrument
 TEST-org.processmining*
+tests/libs-external
