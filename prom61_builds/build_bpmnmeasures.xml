@@ -1,4 +1,4 @@
-<project name="BPMN" default="Compile Sources" basedir="../BPMNMeasures">
+<project name="BPMNMeasures" default="Compile Sources" basedir="../BPMNMeasures">
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src" location="src" />
@@ -6,6 +6,7 @@
 		<property name="doc" location="doc" />
 		<property name="lib" location="lib" />
 		<property name="dist" location="dist" />
+		<property name="xslt" location="xslt" />
 		<property name="release" location="latestrelease" />
 		<property name="version" value="6.1.${env.BUILD_NUMBER}" />
 		<property name="project" value="BPMNMeasures" />
@@ -35,6 +36,10 @@
 					<!-- Check for unsafe operations -->
 					<compilerarg value="-Xlint:unchecked" />
 				</javac>
+				<mkdir dir="${build}/xslt"/>
+				<copy todir="${build}/xslt">
+      				<fileset dir="${xslt}"/>
+			        </copy>
 			</sequential>
 		</macrodef>
 
@@ -131,6 +136,12 @@
 							logo="http://www.promtools.org/prom6/packages/6.1/prom_subtitle_hat_300.png"
 						>
 							<dependency name="Log"/>
+							<dependency name="InteractiveVisualization"/>
+							<dependency name="LogDialog"/>
+							<dependency name="LogMerge"/>
+							<dependency name="PetriNets"/>
+							<dependency name="PetriNetsReplayer"/>
+
 						</package>
 					</packages>
 				</echoxml>

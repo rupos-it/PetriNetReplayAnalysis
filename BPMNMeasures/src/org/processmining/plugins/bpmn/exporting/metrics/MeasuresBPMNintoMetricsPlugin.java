@@ -4,12 +4,11 @@ package org.processmining.plugins.bpmn.exporting.metrics;
 
 
 
-import java.awt.Color;
+
 import java.util.Collection;
-import java.util.HashMap;
+
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
 
 
 
@@ -20,17 +19,11 @@ import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.framework.plugin.events.Logger.MessageLevel;
 
-import org.processmining.models.graphbased.AttributeMap;
-import org.processmining.models.graphbased.directed.ContainingDirectedGraphNode;
+
 import org.processmining.models.graphbased.directed.bpmn.BPMNDiagram;
-import org.processmining.models.graphbased.directed.bpmn.BPMNDiagramExt;
-import org.processmining.models.graphbased.directed.bpmn.BPMNDiagramExtFactory;
+
 import org.processmining.models.graphbased.directed.bpmn.elements.Activity;
-import org.processmining.models.graphbased.directed.bpmn.elements.Artifacts;
-import org.processmining.models.graphbased.directed.bpmn.elements.Flow;
-import org.processmining.models.graphbased.directed.bpmn.elements.SubProcess;
-import org.processmining.models.graphbased.directed.bpmn.elements.Swimlane;
-import org.processmining.models.graphbased.directed.bpmn.elements.Artifacts.ArtifactType;
+
 
 
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -57,12 +50,12 @@ public class MeasuresBPMNintoMetricsPlugin {
 
 
 	@Plugin(name = "BPMNMAnalisysDetailsintoMetricsConformance", parameterLabels = {  "TotalConformanceResult" }, returnLabels = { "BPMN Metrics traslate" }, returnTypes = {
-			List.class }, userAccessible = true)
-	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "GOS", email = "Di.unipi", pack = "BPMNMeasures")
+			LinkedList.class }, userAccessible = true)
+	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "BPMNMeasures")
 	@PluginVariant(requiredParameterLabels = { 0 }, variantLabel = "Exporting  Total Conformance to BPMN Metrics")
-	public Object exportBPMNexportXPDL(PluginContext context, TotalConformanceResult totalconformanceresult) throws Exception {
+	public LinkedList<BPMNConfMetrics> exportBPMNexportXPDL(PluginContext context, TotalConformanceResult totalconformanceresult) throws Exception {
 
-		List<BPMNConfMetrics> metrics=null;
+		LinkedList<BPMNConfMetrics> metrics=null;
 		try {
 			ReplayAnalysisConnection connection = context.getConnectionManager().getFirstConnection(
 					ReplayAnalysisConnection.class, context, totalconformanceresult);
@@ -82,23 +75,23 @@ public class MeasuresBPMNintoMetricsPlugin {
 			metrics = annotateMetricsConformance(totalconformanceresult,net,placeFlowCollection,bpmn);
 
 
+
 		} catch (ConnectionCannotBeObtained e) {
 			// No connections available
 			context.log("Connection does not exist", MessageLevel.DEBUG);
 
 		}
 
-
 		return metrics;
 
 	}
 
 
-	private List<BPMNConfMetrics> annotateMetricsConformance(
+	private LinkedList<BPMNConfMetrics> annotateMetricsConformance(
 			TotalConformanceResult totalconformanceresult, Petrinet net,
 			Collection<Place> placeFlowCollection, BPMNDiagram bpmn) {
 
-		List<BPMNConfMetrics> listaMetrics = new LinkedList<BPMNConfMetrics>();
+		LinkedList<BPMNConfMetrics> listaMetrics = new LinkedList<BPMNConfMetrics>();
 
 		for( ConformanceResult conformance: totalconformanceresult.getList()){
 
@@ -126,7 +119,7 @@ public class MeasuresBPMNintoMetricsPlugin {
 
 
 		for (Transition t : net.getTransitions()) {
-			if (!t.isInvisible()) {
+			if (!t.isInvisible() &&  !t.getLabel().startsWith("ArtificialEnd")) {
 				String tname = t.getLabel();
 				String name = (String) tname.subSequence(0, tname.indexOf("+"));
 
@@ -215,11 +208,11 @@ public class MeasuresBPMNintoMetricsPlugin {
 
 
 	@Plugin(name = "BPMNMAnalisysDetailsintoMetricsPerformance", parameterLabels = {  "TotalPerformanceResult" }, returnLabels = { "BPMN Metrics traslate" }, returnTypes = {
-			List.class }, userAccessible = true)
+			LinkedList.class }, userAccessible = true)
 
-	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "GOS", email = "Di.unipi", pack = "BPMNMeasures")
+	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "BPMNMeasures")
 	@PluginVariant(requiredParameterLabels = { 0 }, variantLabel = "BPMN Performance traslate")
-	public Object exportBPMNexportXPDL(PluginContext context,  TotalPerformanceResult totalPerformanceresult) throws Exception {
+	public LinkedList<BPMNPerfMetrics> exportBPMNexportXPDL(PluginContext context,  TotalPerformanceResult totalPerformanceresult) throws Exception {
 
 
 		try {
@@ -252,11 +245,11 @@ public class MeasuresBPMNintoMetricsPlugin {
 	}
 
 
-	private List<BPMNPerfMetrics> annotateMetricsPerformance(
+	private LinkedList<BPMNPerfMetrics> annotateMetricsPerformance(
 			TotalPerformanceResult totalPerformanceresult, Petrinet net,
 			Collection<Place> placeFlowCollection, BPMNDiagram bpmn) {
 
-		List<BPMNPerfMetrics> listaMetrics = new LinkedList<BPMNPerfMetrics>();
+		LinkedList<BPMNPerfMetrics> listaMetrics = new LinkedList<BPMNPerfMetrics>();
 
 		for( PerformanceResult performance: totalPerformanceresult.getListperformance()){
 
@@ -280,7 +273,7 @@ public class MeasuresBPMNintoMetricsPlugin {
 
 
 		for (Transition t : net.getTransitions()) {
-			if (!t.isInvisible()) {
+			if (!t.isInvisible() &&  !t.getLabel().startsWith("ArtificialEnd") ) {
 				String tname = t.getLabel();
 				String name = (String) tname.subSequence(0, tname.indexOf("+"));
 				Activity activity = null;
@@ -314,7 +307,7 @@ public class MeasuresBPMNintoMetricsPlugin {
 
 					if (activity != null && !taskmetric.isEmpty()) {
 
-						
+
 						if(!metric.getTaskMetrics().containsKey(label)){
 
 							metric.addTaskMetrics(label, taskmetric);

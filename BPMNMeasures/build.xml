@@ -129,14 +129,20 @@
 							os="all" 
 							url="http://www.promtools.org/prom6/packages/${project}/${project}-${version}-${os}.zip"
 							desc="Artifact Modeling"
-							org="dip. Informatica University of Pisa" 
+							org="Dipartimento di Informatica University of Pisa" 
 							license="BPMNMeasures" 
-							author="GOS"
+							author="R. Guanciale, G. Spagnolo et al."
 							auto="false"
 							hasPlugins="true"
 							logo="http://www.promtools.org/prom6/packages/6.1/prom_subtitle_hat_300.png"
 						>
 							<dependency name="Log"/>
+							<dependency name="BPMN"/>
+							<dependency name="LogDialog"/>
+							<dependency name="PetriNetReplayAnalysis"/>
+							<dependency name="PetriNets"/>
+							<dependency name="PetriNetReplayer"/>
+
 						</package>
 					</packages>
 				</echoxml>

@@ -67,7 +67,7 @@ public class BPMNtoPN {
 			parameterLabels = { "BPMNDiagram" },
 			returnLabels = {"Petri Net", "Marking",  "Error Log" },
 			returnTypes = { Petrinet.class, Marking.class, String.class},userAccessible = true)
-	@UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "GOS", email = "Di.unipi", pack = "BPMN")
+	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "BPMNMeasures")
 	@PluginVariant(requiredParameterLabels = {0}, variantLabel = "Trasform BPMN to PN")
 	public Object BPMN2PN(PluginContext c ,BPMNDiagram bpmn) {
 		Collection<String> error = this.isWellFormed(bpmn);
@@ -81,7 +81,7 @@ public class BPMNtoPN {
 		Marking marking = new Marking();
 
 
-		//gli argchi del diagramma BPMN diventano piazze della rete BPMN
+		//gli archi del diagramma BPMN diventano piazze della rete BPMN
 		for (Flow g : bpmn.getFlows()) {
 			String f = g.getSource().getLabel();
 			String z = g.getTarget().getLabel();

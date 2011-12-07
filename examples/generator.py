@@ -32,21 +32,21 @@ class Entry:
     def formatAttr(self, key, value):
         if type(value) == bool:
             valueRepr = "true" if value else "false"
-            typeRepr = "BOOLEAN"
+            typeRepr = "boolean"
         elif type(value) == float:
             valueRepr = str(value)
-            typeRepr = "CONTINUOUS"
+            typeRepr = "float"
         elif type(value) == int:
             valueRepr = str(value)
-            typeRepr = "DISCRETE"
+            typeRepr = "int"
         else:
             valueRepr = str(value)
-            typeRepr = "LITERAL"
+            typeRepr = "string"
         #TIMESTAMP: Attributes with timestamp type encode the UNIX timestamp (e.g., milliseconds since 01/01/1970) they represent, in the same form as discrete attributes.
         #DURATION: Attributes with duration type encode their values in milliseconds, in the same form as discrete attributes.
         return """
-     <attribute key="%s" value="%s" type="%s"/>
-    """ % (key, valueRepr, typeRepr)
+     <%s key="%s" value="%s"/>
+    """ % (typeRepr, key, valueRepr)
 
     def gen(self, t, attrs):
         t0, t1 = self.hook(t, attrs)
