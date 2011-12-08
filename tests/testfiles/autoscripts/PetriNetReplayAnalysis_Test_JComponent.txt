@@ -30,4 +30,28 @@ junit.framework.Assert.assertNotNull("Performance is not null", result);
 
 
 print("Result"+result);
-junit.framework.Assert.assertTrue("Performance success: "+result, result!=null);
+
+jcomp = performance_result_visualizer(result);
+junit.framework.Assert.assertNotNull("Performance Visual is not null", jcomp);
+
+print("Visual Performance"+jcomp);
+
+
+print("Conformance");
+
+result1 = pn_conformace_analysis(log,petrinet);
+junit.framework.Assert.assertNotNull("Conformance is not null", result1);
+
+print("Result"+result1);
+
+jcomp1 = conformance_result_visualizer(result1);
+junit.framework.Assert.assertNotNull("Conformance Visual is not null", jcomp1);
+
+print("Visual Conformance"+jcomp1);
+
+junit.framework.Assert.assertTrue("Conformace  success: "+result1, result1!=null);
+junit.framework.Assert.assertTrue("Conformance Visual successfully : "+jcomp, jcomp!=null);
+
+
+junit.framework.Assert.assertTrue("Performance successfully : "+result, result!=null);
+junit.framework.Assert.assertTrue("Performance Visual successfully : "+jcomp, jcomp!=null);
