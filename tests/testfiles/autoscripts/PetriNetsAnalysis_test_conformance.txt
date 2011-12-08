@@ -28,5 +28,6 @@ print("Conformance");
 result = pn_conformace_analysis(log,petrinet);
 junit.framework.Assert.assertNotNull("Conformance is not null", result);
 
+print("Result"+result);
 
 junit.framework.Assert.assertTrue("Conformace file successfully exported: "+result, result!=null);

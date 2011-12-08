@@ -23,10 +23,11 @@ junit.framework.Assert.assertNotNull("Log file is not null", log);
 print("Log"+log);
 print("PN "+petrinet);
 
-print("Conformance");
+print("Performance");
 
 result = pn_performance_analysis(log,petrinet);
 junit.framework.Assert.assertNotNull("Performance is not null", result);
 
 
+print("Result"+result);
 junit.framework.Assert.assertTrue("Performance file successfully exported: "+result, result!=null);
