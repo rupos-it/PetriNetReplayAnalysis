@@ -1,0 +1,32 @@
+print("TESTCASE: Conformance Test1");
+
+
+String testFileRoot = System.getProperty("test.testFileRoot", "./tests/testfiles");
+
+//----EXAMPLE SCRIPT FOR OPENING LOG-------
+
+// 1) -------------------------------------------------------------
+String filepnml = "residency.pnml";
+String filelog = "wsfm1.mxml";
+
+print("path: "+testFileRoot);
+print("Reading file: "+filepnml);
+print("Reading file: "+filelog);
+
+
+ petrinet = import_petri_net_from_pnml_file(testFileRoot+"/"+filepnml)[0];
+junit.framework.Assert.assertNotNull("Pnml file is not null", petrinet);
+
+log = open_xes_log_file(testFileRoot+"/"+filelog);
+junit.framework.Assert.assertNotNull("Log file is not null", log);
+
+print("Log"+log);
+print("PN "+petrinet);
+
+print("Conformance");
+
+result = pn_conformace_analysis(log,petrinet);
+junit.framework.Assert.assertNotNull("Conformance is not null", result);
+
+
+junit.framework.Assert.assertTrue("Conformace file successfully exported: "+result, result!=null);
