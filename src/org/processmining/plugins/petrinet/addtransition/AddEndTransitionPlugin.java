@@ -28,7 +28,7 @@ import org.processmining.models.semantics.petrinet.Marking;
 public class AddEndTransitionPlugin {
 
 	@PluginVariant(requiredParameterLabels = { 0 })
-	@UITopiaVariant(affiliation = "Dipartimento Informatica Università di Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it",  pack = "PetriNetReplayAnalysis")
+	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it",  pack = "PetriNetReplayAnalysis")
 	public Object addTransition(UIPluginContext context, Petrinet oldnet){
 		
 		AddEndTransitionPanel parameters = new AddEndTransitionPanel();
