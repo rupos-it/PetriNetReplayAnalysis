@@ -5,8 +5,10 @@ package org.processmining.plugins.petrinet.replay.conformance;
 import javax.swing.JComponent;
 
 import org.deckfour.xes.model.XLog;
+import org.processmining.contexts.uitopia.UIPluginContext;
 import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.contexts.uitopia.annotations.Visualizer;
+import org.processmining.contexts.util.StringVisualizer;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.Progress;
@@ -24,7 +26,7 @@ public class ReplayConformancePluginAnalysisVisualizze {
 	@PluginVariant(requiredParameterLabels = { 0 })
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public JComponent visualize(PluginContext context, TotalConformanceResult tovisualize) {
-		
+		if(context instanceof UIPluginContext){
 			try {
 				ReplayAnalysisConnection connection = context.getConnectionManager().getFirstConnection(
 						ReplayAnalysisConnection.class, context, tovisualize);
@@ -40,7 +42,10 @@ public class ReplayConformancePluginAnalysisVisualizze {
 				context.log("Connection does not exist", MessageLevel.DEBUG);
 				return null;
 			}
-		
+		}else {
+			
+			return StringVisualizer.visualize(context, tovisualize.toString());
+		}
 
 	}
 
