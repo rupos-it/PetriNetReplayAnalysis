@@ -37,11 +37,11 @@
 	
 	<!-- include compiled classes, libraries, and test-case files -->
 	<path id="classpath.run">
-		<!-- unconmment these lines if the test shall be run against the packaged jars of the build
 		<pathelement location="${bin}"/>
+		<!-- unconmment these lines if the test shall be run against the packaged jars of the build
       	-->
 		<fileset dir="${home}/dist/">
-        	<include name="${package.name}.jar"/>
+        	<include name="**/*.jar"/>
       	</fileset>
       	<fileset dir="${home}/lib/">
         	<include name="**/*.jar"/>
