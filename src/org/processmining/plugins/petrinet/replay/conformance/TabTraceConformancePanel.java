@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -19,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,12 +28,6 @@ import javax.swing.table.AbstractTableModel;
 import org.processmining.framework.util.ui.scalableview.ScalableComponent;
 import org.processmining.framework.util.ui.scalableview.ScalableViewPanel;
 import org.processmining.framework.util.ui.scalableview.interaction.ViewInteractionPanel;
-import org.processmining.models.graphbased.directed.petrinet.Petrinet;
-import org.processmining.models.graphbased.directed.petrinet.impl.PetrinetFactory;
-import org.processmining.models.jgraph.ProMJGraphVisualizer;
-import org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil;
-
-
 
 import com.fluxicon.slickerbox.components.AutoFocusButton;
 import com.fluxicon.slickerbox.factory.SlickerDecorator;
