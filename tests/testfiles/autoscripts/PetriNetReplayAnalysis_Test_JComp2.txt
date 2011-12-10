@@ -1,0 +1,74 @@
+print("TESTCASE: JComp Test 2");
+
+
+String testFileRoot = System.getProperty("test.testFileRoot", "./tests/testfiles");
+
+//----EXAMPLE SCRIPT FOR OPENING LOG-------
+
+// 1) -------------------------------------------------------------
+String filepnml = "residency.pnml";
+String filelog = "wsfm1.mxml";
+String filelog2 = "wsfm2.mxml";
+
+print("path: "+testFileRoot);
+print("Reading file: "+filepnml);
+print("Reading file: "+filelog);
+
+
+ petrinet = import_petri_net_from_pnml_file(testFileRoot+"/"+filepnml)[0];
+junit.framework.Assert.assertNotNull("Pnml file is not null", petrinet);
+
+log = open_xes_log_file(testFileRoot+"/"+filelog);
+junit.framework.Assert.assertNotNull("Log file is not null", log);
+
+log2 = open_xes_log_file(testFileRoot+"/"+filelog2);
+junit.framework.Assert.assertNotNull("Log2 file is not null", log2);
+
+print("Log"+log2);
+
+print("Log"+log);
+print("PN "+petrinet);
+
+print("Performance");
+
+result = pn_performance_analysis(log,petrinet);
+junit.framework.Assert.assertNotNull("Performance is not null", result);
+
+ net = org.processmining.models.graphbased.directed.petrinet.impl.PetrinetFactory.clonePetrinet(petrinet);
+
+print("Result"+result);
+org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil.drawperformancenet(net, result.getListperformance().get(0).getList(), result.getListperformance().get(0).getMaparc());
+junit.framework.Assert.assertNotNull("Perfomance draw pn  is not null", net);
+
+print("Conformance");
+
+result1 = pn_conformace_analysis(log,petrinet);
+junit.framework.Assert.assertNotNull("Conformance is not null", result1);
+
+result2 = pn_conformace_analysis(log2,petrinet);
+junit.framework.Assert.assertNotNull("Conformance is not null", result2);
+
+
+
+print("Result"+result1);
+
+
+net1 = org.processmining.models.graphbased.directed.petrinet.impl.PetrinetFactory.clonePetrinet(petrinet);
+org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil.drawconformance(net1, result1.getTotal());
+junit.framework.Assert.assertNotNull("Conformace draw pn  is not null", net1);
+
+net2 = org.processmining.models.graphbased.directed.petrinet.impl.PetrinetFactory.clonePetrinet(petrinet);
+org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil.drawconformance(net2, result2.getTotal());
+junit.framework.Assert.assertNotNull("Conformace draw pn  is not null", net2);
+
+
+   visualize= org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil.toHTMLfromMPP(result.getListperformance().get(0).getList());
+junit.framework.Assert.assertTrue("Perf  success: "+visualize, visualize!=null);
+print("Result"+visualize);
+
+junit.framework.Assert.assertTrue("Conformace  success: "+result1, result1!=null);
+junit.framework.Assert.assertTrue("Conformance drow pn successfully : "+net1, net1!=null);
+
+
+junit.framework.Assert.assertTrue("Performance successfully : "+result, result!=null);
+junit.framework.Assert.assertTrue("Performance Visual successfully : "+net, net!=null);
