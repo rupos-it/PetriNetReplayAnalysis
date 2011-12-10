@@ -66,6 +66,15 @@ junit.framework.Assert.assertNotNull("Conformace draw pn  is not null", net2);
 junit.framework.Assert.assertTrue("Perf  success: "+visualize, visualize!=null);
 print("Result"+visualize);
 
+
+org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting setting = new org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting();
+	
+		org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI ui = new org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI(setting);
+ui.initComponents();
+
+org.processmining.plugins.petrinet.addtransition.AddEndTransitionPanel parameters = new org.processmining.plugins.petrinet.addtransition.AddEndTransitionPanel();
+
+
 junit.framework.Assert.assertTrue("Conformace  success: "+result1, result1!=null);
 junit.framework.Assert.assertTrue("Conformance drow pn successfully : "+net1, net1!=null);
 
