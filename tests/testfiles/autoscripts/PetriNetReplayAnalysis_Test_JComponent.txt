@@ -1,4 +1,4 @@
-print("TESTCASE: Performance Test1");
+print("TESTCASE: Jcomp Test1");
 
 
 String testFileRoot = System.getProperty("test.testFileRoot", "./tests/testfiles");
