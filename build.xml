@@ -125,13 +125,13 @@
 							version="${version}" 
 							os="all" 
 							url="http://www.promtools.org/prom6/packages/${project}/${project}-${version}-${os}.zip"
-							desc="PetriNetReplayAnalysis"
-							org="University of Pisa" 
+							desc="PetriNet Replay Conformance and Performance Analysis"
+							org="Department of Computer Science University of Pisa" 
 							license="LGPL" 
 							author="Giorgio Spagnolo (spagnolo@di.unipi.it), Roberto Guanciale (guancio@gmail.com), et all."
 							auto="false"
 							hasPlugins="true"
-							logo="http://www.promtools.org/prom6/packages/prom_subtitle_hat_300.png"
+							logo="http://compass2.di.unipi.it/Didattica/img/cheru.png"
 						>
 							<dependency name="PetriNets"/>
 							<dependency name="InteractiveVisualization"/>
