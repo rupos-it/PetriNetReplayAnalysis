@@ -7,7 +7,7 @@ String testFileRoot = System.getProperty("test.testFileRoot", "./tests/testfiles
 
 // 1) -------------------------------------------------------------
 String filepnml = "residency.pnml";
-String filelog = "wsfm2.mxml";
+String filelog = "wsfm.xes";
 
 print("path: "+testFileRoot);
 print("Reading file: "+filepnml);
