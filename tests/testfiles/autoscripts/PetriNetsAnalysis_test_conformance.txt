@@ -6,7 +6,7 @@ String testFileRoot = System.getProperty("test.testFileRoot", "./tests/testfiles
 //----EXAMPLE SCRIPT FOR OPENING LOG-------
 
 // 1) -------------------------------------------------------------
-String filepnml = "residency.pnml";
+String filepnml = "residencynoend.pnml";
 String filelog = "wsfm.xes";
 
 print("path: "+testFileRoot);
@@ -19,6 +19,13 @@ junit.framework.Assert.assertNotNull("Pnml file is not null", petrinet);
 
 log = open_xes_log_file(testFileRoot+"/"+filelog);
 junit.framework.Assert.assertNotNull("Log file is not null", log);
+
+//petrinet = add_artificial_end_transition(petrinet)[0];
+//junit.framework.Assert.assertNotNull("Pnml add end transition not null", petrinet);
+
+//log = add_end_artificial_events(log);
+//junit.framework.Assert.assertNotNull("Log add end event is not null", log);
+
 
 print("Log"+log);
 print("PN "+petrinet);

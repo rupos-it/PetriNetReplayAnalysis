@@ -87,7 +87,7 @@ public class ReplayConformancePlugin {
 		for (XTrace trace : log) {
 			List<XEventClass> list = getList(trace, classes);
 			try {
-				System.out.println("Replay :" + ++i);
+				System.out.println("Replay :" + trace.getAttributes().get("concept:name"));
 				context.getProgress().inc();
 				List<Transition> sequence = replayer.replayTrace(marking, list, setting);
 				String tracename = getTraceName(trace);

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import org.processmining.framework.plugin.PluginContext;
@@ -172,6 +173,9 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		Collection<ReplayState<C>> finalStates = new TreeSet<ReplayState<C>>();
 		initialStates.add(initialState);
 
+		final List<Integer> stateSize = new Vector<Integer>();
+		stateSize.add(0);
+		
 		/*
 		 * Initialize the MultiThreadedSearcher.
 		 * 
@@ -181,24 +185,40 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		ReplayStateExpander<C> expander = new ReplayStateExpander<C>(settings, net, semantics, map, addOperator);
 		MultiThreadedSearcher<ReplayState<C>> searcher = new MultiThreadedSearcher<ReplayState<C>>(expander,
 				new ExpandCollection<ReplayState<C>>() {
-			private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>(new Comparator<ReplayState<C>>() {
 
+				private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>(new Comparator<ReplayState<C>>() {
+				
 				@Override
 				public int compare(ReplayState<C> o1, ReplayState<C> o2) {
+					if (false)
+						return o1.compareTo(o2);
+					
+					if (true) {
+						int c = o1.cost.compareTo(o2.cost);
+						int c1 = 100*(o1.trace.size()-o2.trace.size());
+						if (c1+c != 0)
+							return c1+c;
+						return o1.compareTo(o2);
+					}
+					
 					int c = o1.cost.compareTo(o2.cost);
 					if (c != 0) {
 						return c;
-					}else{
-						if(o1.trace.size()>o2.trace.size()){
-							return 1;
-						}else{
-							return 0;
-						}
 					}
+					if(o1.trace.size()>o2.trace.size()){
+						return o1.trace.size() - o2.trace.size();
+					}
+					if(o1.trace.size()<o2.trace.size()){
+						return o1.trace.size() - o2.trace.size();
+					}
+					return o1.compareTo(o2);
 				}
 			});
 
 		public void add(Collection<? extends ReplayState<C>> newElements) {
+			Integer value = stateSize.get(0);
+			value += newElements.size();
+			stateSize.set(0, value);
 			states.addAll(newElements);
 		}
 
@@ -219,6 +239,8 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		 */
 		searcher.startSearch(context.getExecutor(), context.getProgress(), finalStates);
 
+		System.out.println("States: " + stateSize.get(0));
+		
 		/*
 		 * Search is done. Check the results.
 		 */
