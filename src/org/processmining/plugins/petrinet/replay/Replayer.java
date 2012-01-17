@@ -3,6 +3,7 @@ package org.processmining.plugins.petrinet.replay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -175,7 +176,7 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 
 		final List<Integer> stateSize = new Vector<Integer>();
 		stateSize.add(0);
-		
+
 		/*
 		 * Initialize the MultiThreadedSearcher.
 		 * 
@@ -186,21 +187,22 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		MultiThreadedSearcher<ReplayState<C>> searcher = new MultiThreadedSearcher<ReplayState<C>>(expander,
 				new ExpandCollection<ReplayState<C>>() {
 
-				private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>(new Comparator<ReplayState<C>>() {
-				
+			private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>(new Comparator<ReplayState<C>>() {
+
+
 				@Override
 				public int compare(ReplayState<C> o1, ReplayState<C> o2) {
 					if (false)
 						return o1.compareTo(o2);
-					
-					if (true) {
+
+					if (false) {
 						int c = o1.cost.compareTo(o2.cost);
 						int c1 = 100*(o1.trace.size()-o2.trace.size());
 						if (c1+c != 0)
 							return c1+c;
 						return o1.compareTo(o2);
 					}
-					
+
 					int c = o1.cost.compareTo(o2.cost);
 					if (c != 0) {
 						return c;
@@ -215,22 +217,40 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 				}
 			});
 
-		public void add(Collection<? extends ReplayState<C>> newElements) {
-			Integer value = stateSize.get(0);
-			value += newElements.size();
-			stateSize.set(0, value);
-			states.addAll(newElements);
-		}
+			Collection<ReplayState<C>> stat = new Vector<ReplayState<C>>();
+			public void add(Collection<? extends ReplayState<C>> newElements) {
+				
+				for(ReplayState<C> r : newElements){
+					for(ReplayState<C> n :stat){
+						if(n.cost.equals(r.cost)){
+							if(n.marking.equals(r.marking)){
+								if(n.trace.equals(r.trace))
+									if(n.transition.equals(r.transition)){
+										//if(n.parentState.compareTo(r.parentState)<0)
+										newElements.remove(r);
+									}
+							}
+						}
+					}
 
-		public boolean isEmpty() {
-			return states.isEmpty();
-		}
+				}
+				/*System.out.println(states);*/
+				Integer value = stateSize.get(0);
+				value += newElements.size();
+				stateSize.set(0, value);
+				states.addAll(newElements);
+			}
 
-		public ReplayState<C> pop() {
-			ReplayState<C> head = states.first();
-			states.remove(head);
-			return head;
-		}
+			public boolean isEmpty() {
+				return states.isEmpty();
+			}
+
+			public ReplayState<C> pop() {
+				ReplayState<C> head = states.first();
+				states.remove(head);
+				stat.add(head);
+				return head;
+			}
 		});
 		searcher.addInitialNodes(initialStates);
 
@@ -240,7 +260,7 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		searcher.startSearch(context.getExecutor(), context.getProgress(), finalStates);
 
 		System.out.println("States: " + stateSize.get(0));
-		
+
 		/*
 		 * Search is done. Check the results.
 		 */
