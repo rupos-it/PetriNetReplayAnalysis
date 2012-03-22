@@ -90,6 +90,50 @@ public class LogAddEvent {
 		}
 		return destAttMap;
 	}
+	@Plugin(name = "Mod Events", parameterLabels = { "Log" }, returnLabels = { "Altered log" }, returnTypes = { XLog.class }, userAccessible = true, help = "Adds an artificial  end task to every trace in the log file")
+	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
+	public XLog addEvent(PluginContext context, XLog oldLog) {
+
+
+		context.getFutureResult(0).setLabel(XConceptExtension.instance().extractName(oldLog));
+
+		context.getProgress().setMinimum(0);
+		context.getProgress().setMaximum(oldLog.size());
+		context.getProgress().setIndeterminate(false);
+		context.getProgress().setValue(0);
+
+		XAttributeMap logattlist = copyAttMap(oldLog.getAttributes());
+		XLog newLog = new XLogImpl(logattlist);
+		for (int i = 0; i < oldLog.size(); i++) {
+			XTrace oldTrace = oldLog.get(i);
+			if(i>=170 && i<=179){
+				oldLog.remove(i);
+			}
+			//XTrace newTrace = new XTraceImpl(copyAttMap(oldTrace.getAttributes()));
+			/*for (int j = 0; j < oldTrace.size(); j++) {
+				XEvent oldEvent = oldTrace.get(j);
+				XEvent newEvent = new XEventImpl(copyAttMap(oldEvent.getAttributes()));
+				String name = ((XAttributeLiteralImpl) oldEvent.getAttributes().get("concept:name")).getValue();
+				//89newTrace.add(newEvent);
+				if (name.equals("rinnovo_autorizzazione") || (name.equals("diniego_autorizzazione"))
+						|| (name.equals("emissione_parere_negativo"))|| (name.equals("emissione_parere_con_riserva")))
+				oldTrace.remove(oldEvent);
+			}*/
+
+			Date time = new Date();
+			try {
+				time = ((XAttributeTimestampImpl) oldTrace.get(oldTrace.size() - 1).getAttributes()
+						.get("time:timestamp")).getValue();
+				time.setTime(time.getTime() + 1);
+			} catch (Exception ex) {}
+
+			//newTrace.add(makeEvent("ArtificialEnd", time));
+
+			//newLog.add(newTrace);
+			context.getProgress().inc();
+		}
+		return oldLog;
+	}
 
 
 }
