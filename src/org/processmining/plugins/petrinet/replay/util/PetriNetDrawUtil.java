@@ -71,13 +71,13 @@ public class PetriNetDrawUtil {
 			}
 			if(ii>0 && i>0){
 				String r=String.valueOf(ii)+"/-"+String.valueOf(i);
-				pl.getAttributeMap().put(AttributeMap.FILLCOLOR, Color.RED);
+				pl.getAttributeMap().put(AttributeMap.FILLCOLOR, Color.PINK);
 				pl.getAttributeMap().remove(AttributeMap.TOOLTIP);
 				pl.getAttributeMap().put(AttributeMap.TOOLTIP, r);
 				pl.getAttributeMap().put(AttributeMap.SHOWLABEL, true);
 				//this.inserPlace(pl.getLabel(), x, y, "red", r);
 			}else if (ii>0 && i<=0){
-				pl.getAttributeMap().put(AttributeMap.FILLCOLOR, Color.RED);
+				pl.getAttributeMap().put(AttributeMap.FILLCOLOR, Color.CYAN);
 				pl.getAttributeMap().remove(AttributeMap.TOOLTIP);
 				pl.getAttributeMap().put(AttributeMap.TOOLTIP, String.valueOf(ii));
 				pl.getAttributeMap().put(AttributeMap.SHOWLABEL, true);
