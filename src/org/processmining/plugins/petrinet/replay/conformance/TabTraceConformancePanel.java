@@ -5,6 +5,7 @@ package org.processmining.plugins.petrinet.replay.conformance;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -24,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.processmining.framework.util.ui.scalableview.ScalableComponent;
 import org.processmining.framework.util.ui.scalableview.ScalableViewPanel;
@@ -117,7 +119,22 @@ public class TabTraceConformancePanel extends JPanel implements MouseListener, M
 				return false; 
 			}
 		});
-		
+		 tab.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+				public Component getTableCellRendererComponent (JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
+				{
+					Component cell = super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
+					if (tovisualize.getList().get(row).getMissingMarking().isEmpty() &&
+							tovisualize.getList().get(row).getMapTransition().isEmpty() &&
+							tovisualize.getList().get(row).getConformance()>0.92){
+						cell.setBackground( Color.gray );
+					}else{
+					
+						cell.setBackground( Color.red );
+					}
+						
+					return cell;
+
+				}});
 		 legendPanel.setLayout(new BoxLayout(legendPanel, BoxLayout.Y_AXIS));
 		 jp1.setLayout(new BoxLayout(jp1, BoxLayout.X_AXIS));
 		 
