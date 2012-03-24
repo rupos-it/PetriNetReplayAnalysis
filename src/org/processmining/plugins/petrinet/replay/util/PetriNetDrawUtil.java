@@ -177,9 +177,9 @@ public class PetriNetDrawUtil {
 		for(Place place : Result.keySet()){
 			PerformanceData perRes =	Result.get(place);
 			placen+="<td>"+place.getLabel()+"</td>";
-			waitt += "<td>"+perRes.getWaitTime()+"</td>";
-			synct += "<td>"+perRes.getSynchTime()+"</td>";
-			sogtime += "<td>"+perRes.getTime()+"</td>";
+			waitt += "<td>"+secondsToString((long)perRes.getWaitTime())+"</td>";
+			synct += "<td>"+secondsToString((long)perRes.getSynchTime())+"</td>";
+			sogtime += "<td>"+secondsToString((long)perRes.getTime())+"</td>";
 		}
 
 		out=start+"<tr>"+placen+"</tr>"+"<tr>"+waitt+"</tr>"+"<tr>"+synct+"</tr>"+"<tr>"+sogtime+"</tr>"+end;
