@@ -62,5 +62,6 @@
 	<classpathentry kind="lib" path="packagelib/InteractiveVisualization.jar"/>
 	<classpathentry kind="lib" path="packagelib/LogMerge.jar"/>
 	<classpathentry kind="lib" path="stdlib/EfficientStorage.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BPMNMeasures"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

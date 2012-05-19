@@ -93,7 +93,7 @@ public class ReplayConformancePlugin {
 				String tracename = getTraceName(trace);
 				updateConformance(net, marking, sequence, semantics, totalResult,tracename);
 				replayedTraces++;
-				System.out.println("Replayed");
+				System.out.println("Replayed"+sequence);
 
 			} catch (Exception ex) {
 				System.out.println("Failed");
