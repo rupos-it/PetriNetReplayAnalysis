@@ -47,7 +47,6 @@ import org.processmining.models.graphbased.directed.petrinet.elements.Transition
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
-import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
@@ -423,14 +422,18 @@ public class ReplayPerformancePlugin {
 		 */
 		int currentStep=0;
 		
-		
-		JComponent configsimilarity = lpcfui.initComponents2();
+		// TODO: Insert plugin description
+		String label = "<html><h3>TODO: Insert plugin description</h3></html>";
+				
+
+		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
 		JComponent config = ui.initComponents();
 		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-		
-		
+
+
 		JComponent mapping = lpcfui.initComponents();
 		currentStep++;
+		boolean d=false;
 		while (sem) {
 
 			switch (result) {
@@ -438,29 +441,42 @@ public class ReplayPerformancePlugin {
 				/*
 				 * Show the next step. 
 				 */
+				
+				if (currentStep == 0) {
+					currentStep = 1;
+				}
 				if(currentStep==1){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
 					currentStep++;
+					d=true;
+					break;
 				}
 				if(currentStep==2){
-				result =context.showWizard("Configure Performance Settings", false, true, config);
+					d=false;
+					result =context.showWizard("Configure Performance Settings", false, true, config);
+					ui.setWeights();
 				}
-				ui.setWeights();
+				
 				break;
 			case PREV :
 				/*
 				 * Move back. 
 				 */
+				if(d){
+					currentStep--;
+					d=false;
+				}
 				if(currentStep==1){
-					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );;
-					
+					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+					mapping = lpcfui.initComponents();
 				}
 				if(currentStep==2){
-				result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
-				currentStep--;
+					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+					currentStep--;
+					
 				}
 
-				
+
 				break;
 			case FINISHED :
 				/*

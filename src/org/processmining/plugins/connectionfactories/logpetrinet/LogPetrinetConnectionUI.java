@@ -150,12 +150,12 @@ public class LogPetrinetConnectionUI extends LogPetrinetConnectionFactoryUI{
 		}
 	}
 	
-	public JComponent initComponents2() {
+	public JComponent initComponentsDifferntMapping(String stringlabel) {
 		
 		JPanel panel = new JPanel();
 		SlickerFactory slickerFactory = SlickerFactory.instance();
 
-		double size[][] = { { TableLayout.FILL,0.5 }, { TableLayout.FILL,1  } };
+		double size[][] = { { TableLayout.FILL,0.3 }, { TableLayout.FILL,0.3  } };
 		panel.setLayout(new TableLayout(size));
 
 		ChangeListener changeListener = new ChangeListener() {
@@ -165,11 +165,11 @@ public class LogPetrinetConnectionUI extends LogPetrinetConnectionFactoryUI{
 			}
 		};
 		
-		JLabel label = slickerFactory.createLabel("<html><h3>Ciao</h3>");
-		panel.add(label,"0,1");
+		JLabel label = slickerFactory.createLabel(stringlabel);
+		panel.add(label,"0,0");
 		JCheckBox checkbox = slickerFactory.createCheckBox("Log to Transition 1:1", similarity);
 		checkbox.addChangeListener(changeListener);
-		panel.add(checkbox,"0,0");
+		panel.add(checkbox,"0,1");
 
 	/*	for (ReplayAction action : ReplayAction.values()) {
 			sliderMap.put(action, slickerFactory.createNiceIntegerSlider("", 1, 1000, setting.getWeight(action),
