@@ -48,6 +48,7 @@ import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
+import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
@@ -408,11 +409,11 @@ public class ReplayPerformancePlugin {
 			return null;
 		}
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionFactoryUI lpcfui = new LogPetrinetConnectionFactoryUI(log, net);
+		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net);
 
 		//Create map or not according to the button pressed in the UI
 		map=null;
-		InteractionResult result =null;
+		InteractionResult result = InteractionResult.NEXT;
 		/*
 		 * The wizard loop.
 		 */
@@ -420,9 +421,16 @@ public class ReplayPerformancePlugin {
 		/*
 		 * Show the current step.
 		 */
-		JComponent mapping = lpcfui.initComponents();
+		int currentStep=0;
+		
+		
+		JComponent configsimilarity = lpcfui.initComponents2();
 		JComponent config = ui.initComponents();
-		result = context.showWizard("Mapping Petrinet - Log", true, false, mapping );
+		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+		
+		
+		JComponent mapping = lpcfui.initComponents();
+		currentStep++;
 		while (sem) {
 
 			switch (result) {
@@ -430,14 +438,29 @@ public class ReplayPerformancePlugin {
 				/*
 				 * Show the next step. 
 				 */
+				if(currentStep==1){
+					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+					currentStep++;
+				}
+				if(currentStep==2){
 				result =context.showWizard("Configure Performance Settings", false, true, config);
+				}
 				ui.setWeights();
 				break;
 			case PREV :
 				/*
 				 * Move back. 
 				 */
-				result = context.showWizard("Mapping Petrinet - Log", true, false,  mapping);
+				if(currentStep==1){
+					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );;
+					
+				}
+				if(currentStep==2){
+				result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+				currentStep--;
+				}
+
+				
 				break;
 			case FINISHED :
 				/*
