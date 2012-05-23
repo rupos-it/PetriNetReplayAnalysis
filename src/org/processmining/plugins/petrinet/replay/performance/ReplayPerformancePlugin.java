@@ -423,7 +423,17 @@ public class ReplayPerformancePlugin {
 		int currentStep=0;
 		
 		// TODO: Insert plugin description
-		String label = "<html><h3>TODO: Insert plugin description</h3></html>";
+		String label = "<html> <p>&nbsp;</p><h2>PetriNetReplayAnalysis: Compute Performance " +
+				"details &nbsp;</h2><p>This plugin in based on the article<sup>1</sup>.&nbsp;</p>" +
+				"<p>&nbsp;</p><p>The user guide for this plugin is <a href=\"https://svn.win.tue.nl/repos/prom/Documentation/\">" +
+				"here</a>&nbsp;https://svn.win.tue.nl/repos/prom/Documentation/</p><p>The source code for this plugin is " +
+				"<a href=\"https://github.com/rupos-it/PetriNetReplayAnalysis\">here</a> " +
+				"https://github.com/rupos-it/PetriNetReplayAnalysis&nbsp;</p><p>&nbsp;</p>" +
+				"<span style=\"font-size:8px;\"><sup>1</sup>Roberto Guanciale, Roberto Bruni, Andrea Corradini, " +
+				"Gianluigi Ferrari, Tito Flagella, and Giorgio O. Spagnolo. Applying process analysis to the italian " +
+				"egovernment<br/> enterprise architecture. In Proceedings of WS-FM 2011, 8th International Workshop on Web " +
+				"Services and Formal Methods</span>" +
+				" </html>";
 				
 
 		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
