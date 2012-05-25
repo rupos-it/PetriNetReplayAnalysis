@@ -4,6 +4,7 @@ package org.processmining.plugins.petrinet.replay.performance;
 import info.clearthought.layout.TableLayout;
 
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -23,6 +24,8 @@ import org.processmining.models.jgraph.visualization.ProMJGraphPanel;
 import org.processmining.plugins.petrinet.replay.util.LogViewInteractivePanel;
 import org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil;
 import org.processmining.plugins.petrinet.replay.util.StringInteractivePanel;
+
+import com.fluxicon.slickerbox.factory.SlickerFactory;
 
 
 
@@ -54,6 +57,7 @@ public class ReplayPerformanceAnalysisPanel extends JPanel{
 	
 	private void paintlayout(TotalPerformanceResult tovisualize, XLog log) {
 		Petrinet net = PetrinetFactory.clonePetrinet(net_original);
+		if(!tovisualize.getListperformance().isEmpty()){
 		PetriNetDrawUtil.drawperformancenet(net, tovisualize.getListperformance().get(0).getList(), tovisualize.getListperformance().get(0).getMaparc());
 		
 		String  visualize= PetriNetDrawUtil.toHTMLfromMPP(tovisualize.getListperformance().get(0).getList());
@@ -105,6 +109,15 @@ public class ReplayPerformanceAnalysisPanel extends JPanel{
 		
 		add(totalresult, "0, 1");
 		add(logView, "1, 1");*/
+		}else{
+			
+			SlickerFactory slickerFactory = SlickerFactory.instance();
+
+			double size[][] = { { TableLayout.FILL,0.3 }, { TableLayout.FILL,0.3  } };
+			setLayout(new TableLayout(size));
+			JLabel label = slickerFactory.createLabel("<html><h2>   No events conform to the model</h2></html>");
+			add(label,"0,0");
+		}
 		
 	}
 
