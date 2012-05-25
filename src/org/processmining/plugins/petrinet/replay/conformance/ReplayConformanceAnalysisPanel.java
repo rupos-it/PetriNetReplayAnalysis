@@ -21,6 +21,8 @@ import org.processmining.plugins.petrinet.replay.util.LogViewInteractivePanel;
 import org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil;
 import org.processmining.plugins.petrinet.replay.util.StringInteractivePanel;
 
+import com.fluxicon.slickerbox.factory.SlickerFactory;
+
 
 
 public class ReplayConformanceAnalysisPanel extends JPanel{
@@ -106,8 +108,8 @@ public class ReplayConformanceAnalysisPanel extends JPanel{
 
 			double size[][] = { { TableLayout.FILL,0.3 }, { TableLayout.FILL,0.3  } };
 			setLayout(new TableLayout(size));
-			JLabel label = slickerFactory.createLabel("<html><h2>   No trace replace to the model</h2></html>");
-			add(label,"0,0");
+			
+			add( slickerFactory.createLabel("<html><h2>   No trace replace to the model</h2></html>"),"0,0");
 		}
 	}
 
