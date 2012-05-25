@@ -49,6 +49,7 @@ import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
 
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
+import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
@@ -293,12 +294,12 @@ public class ReplayConformancePlugin {
 
 
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionFactoryUI lpcfui = new LogPetrinetConnectionFactoryUI(log, net);
+		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net);
 		//InteractionResult result = context.showWizard("Mapping Petrinet - Log", false, true,  lpcfui.initComponents());
 
 		//Create map or not according to the button pressed in the UI
 		Map<Transition, XEventClass> map=null;
-		InteractionResult result =null;
+		InteractionResult result = InteractionResult.NEXT;
 		/*
 		 * The wizard loop.
 		 */
@@ -306,9 +307,34 @@ public class ReplayConformancePlugin {
 		/*
 		 * Show the current step.
 		 */
-		JComponent mapping = lpcfui.initComponents();
+		int currentStep=0;
+
+		// TODO: Insert plugin description
+		String label = "<html>"+
+				"<h2>PetriNetReplayAnalysis: Conformance metrics <br></h2>" +
+				"<p>This package implement the algorithms described on this article<sup>1</sup>.<br/>" +
+				"<br/>This plugin replayed a log events on the bussiness process model. The" +
+				" model is a Petri net and reproduces a bussiness process. <br/>" +
+				"<br/>The result of Conformance plugin is a set Petri nets with annoted for all " +
+				"place remaining, missing token and transition force enabled for all trace of log. <br> </p>" +
+				"<br/><br/><p>The user guide for this plugin is <a href=\"https://svn.win.tue.nl/repos/prom/Documentation/\">" +
+				"here </a>https://svn.win.tue.nl/repos/prom/Documentation/PetriNetReplayAnalysis.pdf</p>" +
+				"<br/><br/><p>The source code for this plugin is <a href=\"https://github.com/rupos-it/PetriNetReplayAnalysis\">here </a>" +
+				"https://github.com/rupos-it/PetriNetReplayAnalysis</p><br/><br/><p><span style=\"font-size:8px;\"><sup>1</sup>" +
+				"Roberto Bruni, Andrea Corradini, Gianluigi Ferrari, Tito Flagella, Roberto Guanciale, and " +
+				"Giorgio O. Spagnolo. Applying process analysis to the italian egovernment enterprise architecture. " +
+				"<br/>In <i>Proceedings of WS-FM 2011, 8th International Workshop on Web Services and Formal Methods</i>" +
+				"<a href=\"http://goo.gl/EmiDJ\">http://goo.gl/EmiDJ</a></span></p>"+	
+				" </html>";
+
+		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
 		JComponent config = ui.initComponents();
-		result = context.showWizard("Mapping Petrinet - Log", true, false, mapping );
+		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+
+
+		JComponent mapping = lpcfui.initComponents();
+		currentStep++;
+		boolean d=false;
 		while (sem) {
 
 			switch (result) {
@@ -316,14 +342,42 @@ public class ReplayConformancePlugin {
 				/*
 				 * Show the next step. 
 				 */
-				result =context.showWizard("Configure Conformance Settings", false, true, config);
-				ui.setWeights();
+
+				if (currentStep == 0) {
+					currentStep = 1;
+				}
+				if(currentStep==1){
+					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+					currentStep++;
+					d=true;
+					break;
+				}
+				if(currentStep==2){
+					d=false;
+					result =context.showWizard("Configure Performance Settings", false, true, config);
+					ui.setWeights();
+				}
+				
 				break;
 			case PREV :
 				/*
 				 * Move back. 
 				 */
-				result = context.showWizard("Mapping Petrinet - Log", true, false,  mapping);
+				if(d){
+					currentStep--;
+					d=false;
+				}
+				if(currentStep==1){
+					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+					mapping = lpcfui.initComponents();
+				}
+				if(currentStep==2){
+					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+					currentStep--;
+					
+				}
+
+
 				break;
 			case FINISHED :
 				/*
@@ -337,6 +391,7 @@ public class ReplayConformancePlugin {
 				 * Should not occur.
 				 */
 				context.log("press Cancel");
+				context.getFutureResult(0).cancel(true);
 				return null;
 			}
 		}
@@ -352,6 +407,7 @@ public class ReplayConformancePlugin {
 			marking = connection.getObjectWithRole(InitialMarkingConnection.MARKING);
 		} catch (ConnectionCannotBeObtained ex) {
 			context.log("Petri net lacks initial marking");
+			context.getFutureResult(0).cancel(true);
 			return null;
 		}
 
@@ -400,6 +456,7 @@ public class ReplayConformancePlugin {
 		} catch (ConnectionCannotBeObtained ex) {
 			context.log("Petri net lacks initial marking");
 			System.out.println("**************** NO MARKING **************");
+			context.getFutureResult(0).cancel(true);
 			return null;
 		}
 		Map<Transition, XEventClass> map=null;

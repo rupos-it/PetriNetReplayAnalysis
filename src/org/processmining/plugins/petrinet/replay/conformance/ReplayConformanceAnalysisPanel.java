@@ -21,6 +21,8 @@ import org.processmining.plugins.petrinet.replay.util.LogViewInteractivePanel;
 import org.processmining.plugins.petrinet.replay.util.PetriNetDrawUtil;
 import org.processmining.plugins.petrinet.replay.util.StringInteractivePanel;
 
+import com.fluxicon.slickerbox.factory.SlickerFactory;
+
 
 
 public class ReplayConformanceAnalysisPanel extends JPanel{
@@ -55,6 +57,7 @@ public class ReplayConformanceAnalysisPanel extends JPanel{
 
 	private void inizialize(XLog log) {
 		Petrinet netx = PetrinetFactory.clonePetrinet(net);
+		if(!tovisualize.getTotal().isEmpty()){
 		PetriNetDrawUtil.drawconformance(netx,tovisualize.getTotal());
 		netPNView = ProMJGraphVisualizer.instance().visualizeGraph(context, netx);
 
@@ -97,7 +100,17 @@ public class ReplayConformanceAnalysisPanel extends JPanel{
 		
 		//add (tab, "5, 3      "); // Right
 		//add (totalresult, "3, 3      "); // Center
+		
 */		
+
+		}else{
+		  SlickerFactory slickerFactory = SlickerFactory.instance();
+
+			double size[][] = { { TableLayout.FILL,0.3 }, { TableLayout.FILL,0.3  } };
+			setLayout(new TableLayout(size));
+			
+			add( slickerFactory.createLabel("<html><h2>   No trace replace to the model</h2></html>"),"0,0");
+		}
 	}
 
 

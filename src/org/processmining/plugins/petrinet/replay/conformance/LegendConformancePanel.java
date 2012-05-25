@@ -105,7 +105,7 @@ public class LegendConformancePanel extends JPanel implements MouseListener, Mou
 		JPanel redPanel = new JPanel();
 		redPanel.setBackground(Color.WHITE);
 		legendPanel.add(redPanel, "0," + row + ",r, c");
-		JLabel moveViolLbl = factory.createLabel(" Transition or place witout problem");
+		JLabel moveViolLbl = factory.createLabel(" Transition or place without problems");
 		moveViolLbl.setForeground(Color.WHITE);
 		legendPanel.add(moveViolLbl, "1," + row++ + ",l, c");
 		
