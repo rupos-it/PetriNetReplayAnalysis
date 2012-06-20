@@ -36,6 +36,7 @@ import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginVariant;
+import org.processmining.framework.util.Pair;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.AttributeMap;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -292,9 +293,27 @@ public class ReplayConformancePlugin {
 		ReplayAnalysisUI ui = new ReplayAnalysisUI(setting);
 		//context.showWizard("Configure Conformance Settings", true, false, ui.initComponents());
 
+		// list possible classifiers
+		List<XEventClassifier> classList = new ArrayList<XEventClassifier>(log.getClassifiers());
+		// add default classifiers
+		if (!classList.contains(XLogInfoImpl.RESOURCE_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.RESOURCE_CLASSIFIER);
+		}
+		//				if (!classList.contains(XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER)){
+		//					classList.add(0, XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER);
+		//				}
+		if (!classList.contains(XLogInfoImpl.NAME_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.NAME_CLASSIFIER);
+		}
+		if (!classList.contains(XLogInfoImpl.STANDARD_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.STANDARD_CLASSIFIER);
+		}
+
+		Object[] availableEventClass = classList.toArray(new Object[classList.size()]);		
+
 
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net);
+		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net, availableEventClass);
 		//InteractionResult result = context.showWizard("Mapping Petrinet - Log", false, true,  lpcfui.initComponents());
 
 		//Create map or not according to the button pressed in the UI
@@ -332,7 +351,7 @@ public class ReplayConformancePlugin {
 		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
 
 
-		JComponent mapping = lpcfui.initComponents();
+		JComponent mapping = lpcfui;
 		currentStep++;
 		boolean d=false;
 		while (sem) {
@@ -357,7 +376,7 @@ public class ReplayConformancePlugin {
 					result =context.showWizard("Configure Performance Settings", false, true, config);
 					ui.setWeights();
 				}
-				
+
 				break;
 			case PREV :
 				/*
@@ -369,12 +388,12 @@ public class ReplayConformancePlugin {
 				}
 				if(currentStep==1){
 					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-					mapping = lpcfui.initComponents();
+					mapping = lpcfui;
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
 					currentStep--;
-					
+
 				}
 
 
@@ -383,7 +402,7 @@ public class ReplayConformancePlugin {
 				/*
 				 * Return  final step.
 				 */
-				map = lpcfui.getMap();
+				map = getmap(lpcfui.getMap());
 				sem=false;
 				break;
 			default :
@@ -415,6 +434,16 @@ public class ReplayConformancePlugin {
 
 
 		return totalResult;
+	}
+
+	private Map<Transition, XEventClass> getmap(
+			Collection<Pair<Transition, XEventClass>> map) {
+		Map<Transition, XEventClass> maps= new HashMap<Transition, XEventClass>();
+		for(Pair<Transition, XEventClass> coppia:map){
+			maps.put(coppia.getFirst(),coppia.getSecond());
+		}
+
+		return maps;
 	}
 
 	//@Plugin(name = "ConformanceDetails", returnLabels = { "Conformance Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {}, userAccessible = true)

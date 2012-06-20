@@ -410,7 +410,7 @@ public class ReplayPerformancePlugin {
 			return null;
 		}
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net);
+		LogPetrinetConnectionUI lpcfui =null;// new LogPetrinetConnectionUI(log, net);
 
 		//Create map or not according to the button pressed in the UI
 		map=null;
@@ -448,7 +448,7 @@ public class ReplayPerformancePlugin {
 		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
 
 
-		JComponent mapping = lpcfui.initComponents();
+		JComponent mapping = null;//lpcfui.initComponents();
 		currentStep++;
 		boolean d=false;
 		while (sem) {
@@ -485,7 +485,7 @@ public class ReplayPerformancePlugin {
 				}
 				if(currentStep==1){
 					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-					mapping = lpcfui.initComponents();
+					mapping = lpcfui=null;//.initComponents();
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
@@ -499,7 +499,7 @@ public class ReplayPerformancePlugin {
 				/*
 				 * Return  final step.
 				 */
-				map = lpcfui.getMap();
+				map = null;// lpcfui.getMap();
 				sem=false;
 				break;
 			default :

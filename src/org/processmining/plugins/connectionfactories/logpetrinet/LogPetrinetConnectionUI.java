@@ -43,8 +43,8 @@ public class LogPetrinetConnectionUI extends LogPetrinetConnectionFactoryUI{
 	/** PetriNet */
 	private final PetrinetGraph net;
 	
-	public LogPetrinetConnectionUI(XLog l, PetrinetGraph pn) {
-		super(l, pn);
+	public LogPetrinetConnectionUI(XLog l, PetrinetGraph pn, Object[] availableEventClass) {
+		super(l, pn, availableEventClass);
 		log = l;
 		net = pn;
 	}
@@ -56,54 +56,7 @@ public class LogPetrinetConnectionUI extends LogPetrinetConnectionFactoryUI{
 	public void setSimilarity(Boolean similarity) {
 		this.similarity = similarity;
 	}
-	public JComponent initComponents() {
-		//Factory to create ProM swing components
-				SlickerFactory factory = SlickerFactory.instance();
-
-				//Setting the Panel
-				JPanel panel = new JPanel();
-
-				//Setting the Layout (table of 2 columns and N rows)
-				GridLayout experimentLayout = new GridLayout(0, 2);
-				panel.setLayout(experimentLayout);
-
-				//Setting the "table"
-				panel.add(factory.createLabel("Transition"));
-				panel.add(factory.createLabel("Event"));
-
-				//Getting the Event Classes
-				XEventClassifier classifier = XLogInfoImpl.STANDARD_CLASSIFIER;
-				XLogInfo summary = XLogInfoFactory.createLogInfo(log, classifier);
-				Collection<XEventClass> classes = summary.getEventClasses(classifier).getClasses();
-
-				//Creating the possible Event Box options
-				classesA = classes.toArray();
-				Arrays.sort(classesA);
-				Object[] invisibleA = { "NONE" };
-				Object[] boxOptions = ArrayUtils.concatAll(invisibleA, classesA);
-
-				//For all Transitions, create a 2 boxes
-				ArrayList<Transition> transList = new ArrayList<Transition>(net.getTransitions());
-				//Collections.sort(transList);
-
-				for (Transition transition : transList) {
-					//Add the transition in that position to the vector
-					transV.add(transition);
-
-					//Create a Label with the name of the Transition
-					String transName = (String) transition.getAttributeMap().get(AttributeMap.LABEL);
-					panel.add(factory.createLabel(transName));
-
-					//Create, store, and show the box of the events for that transition
-					JComboBox boxE = factory.createComboBox(boxOptions);
-					boxE.setSelectedIndex(preSelectOption(transName, boxOptions));
-					eBoxes.add(boxE);
-					panel.add(boxE);
-				}
-
-				return panel;
-	}
-
+	
 	/**
 	 * Returns the Event Option Box index of the most similar event for the
 	 * transition.
