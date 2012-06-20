@@ -47,9 +47,9 @@ import org.processmining.models.graphbased.directed.petrinet.elements.Transition
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
-import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
+import org.processmining.plugins.petrinet.replay.util.PanelIntroPlugin;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
@@ -410,7 +410,7 @@ public class ReplayPerformancePlugin {
 			return null;
 		}
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionUI lpcfui =null;// new LogPetrinetConnectionUI(log, net);
+		PanelIntroPlugin lpcfui =null;// new LogPetrinetConnectionUI(log, net);
 
 		//Create map or not according to the button pressed in the UI
 		map=null;
@@ -443,7 +443,7 @@ public class ReplayPerformancePlugin {
 				+" </html>";
 				
 
-		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
+		JComponent configsimilarity = new PanelIntroPlugin(label);
 		JComponent config = ui.initComponents();
 		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
 
@@ -485,7 +485,7 @@ public class ReplayPerformancePlugin {
 				}
 				if(currentStep==1){
 					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-					mapping = lpcfui=null;//.initComponents();
+					//mapping = lpcfui=null;//.initComponents();
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );

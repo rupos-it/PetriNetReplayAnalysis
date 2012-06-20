@@ -50,9 +50,9 @@ import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
 
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
-import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
+import org.processmining.plugins.petrinet.replay.util.PanelIntroPlugin;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
@@ -63,14 +63,15 @@ import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting;
 public class ReplayConformancePlugin {
 
 
+	
 
-
-	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, Marking marking, ReplayFitnessSetting setting,Map<Transition, XEventClass> map  ) {
+	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, Marking marking, ReplayFitnessSetting setting,Map<Transition, XEventClass> map, XEventClassifier classif   ) {
 		TotalConformanceResult totalResult = new TotalConformanceResult();
 		totalResult.setTotal(new ConformanceResult("Total"));
 		totalResult.setList(new Vector<ConformanceResult>());
 
-		XEventClasses classes = getEventClasses(log);
+		//= XLogInfoImpl.STANDARD_CLASSIFIER;
+		XEventClasses classes = getEventClasses(log, classif );
 		if(map==null){
 			//Map<Transition, XEventClass> 
 			map = getMapping(classes, net);
@@ -216,8 +217,8 @@ public class ReplayConformancePlugin {
 		return list;
 	}
 
-	private XEventClasses getEventClasses(XLog log) {
-		XEventClassifier classifier = XLogInfoImpl.STANDARD_CLASSIFIER;
+	private XEventClasses getEventClasses(XLog log, XEventClassifier classifier) {
+		 
 		XLogInfo summary = XLogInfoFactory.createLogInfo(log, classifier);
 		XEventClasses eventClasses = summary.getEventClasses(classifier);
 		return eventClasses;
@@ -243,7 +244,7 @@ public class ReplayConformancePlugin {
 	}
 
 
-	private void suggestActions(ReplayFitnessSetting setting, XLog log, Petrinet net) {
+	private void suggestActions(ReplayFitnessSetting setting, XLog log, Petrinet net,XEventClassifier classif) {
 		boolean hasInvisibleTransitions = false;
 		Collection<String> transitionLabels = new HashSet<String>();
 		for (Transition transition : net.getTransitions()) {
@@ -253,7 +254,7 @@ public class ReplayConformancePlugin {
 			}
 		}
 		Collection<String> eventClassLabels = new HashSet<String>();
-		for (XEventClass eventClass : getEventClasses(log).getClasses()) {
+		for (XEventClass eventClass : getEventClasses(log, classif).getClasses()) {
 			eventClassLabels.add(eventClass.getId());
 		}
 		setting.setAction(ReplayAction.INSERT_ENABLED_MATCH, true);
@@ -288,9 +289,7 @@ public class ReplayConformancePlugin {
 	@PluginVariant(requiredParameterLabels = { 0,1})
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalConformanceResult getConformanceDetails(UIPluginContext context, XLog log, Petrinet net) {
-		ReplayFitnessSetting setting = new ReplayFitnessSetting();
-		suggestActions(setting, log, net);
-		ReplayAnalysisUI ui = new ReplayAnalysisUI(setting);
+		
 		//context.showWizard("Configure Conformance Settings", true, false, ui.initComponents());
 
 		// list possible classifiers
@@ -313,7 +312,7 @@ public class ReplayConformancePlugin {
 
 
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net, availableEventClass);
+		LogPetrinetConnectionFactoryUI mapping = new LogPetrinetConnectionFactoryUI(log, net, availableEventClass);
 		//InteractionResult result = context.showWizard("Mapping Petrinet - Log", false, true,  lpcfui.initComponents());
 
 		//Create map or not according to the button pressed in the UI
@@ -345,13 +344,18 @@ public class ReplayConformancePlugin {
 				"<br/>In <i>Proceedings of WS-FM 2011, 8th International Workshop on Web Services and Formal Methods</i>" +
 				"<a href=\"http://goo.gl/EmiDJ\">http://goo.gl/EmiDJ</a></span></p>"+	
 				" </html>";
+		
 
-		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
+		JComponent intro = new PanelIntroPlugin(label);
+		ReplayFitnessSetting setting = new ReplayFitnessSetting();
+		suggestActions(setting, log, net,mapping.getSelectedClassifier());
+		ReplayAnalysisUI ui = new ReplayAnalysisUI(setting);
+		
 		JComponent config = ui.initComponents();
-		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+		result = context.showWizard("Select Type Mapping", true, false, intro );
 
 
-		JComponent mapping = lpcfui;
+		
 		currentStep++;
 		boolean d=false;
 		while (sem) {
@@ -387,8 +391,8 @@ public class ReplayConformancePlugin {
 					d=false;
 				}
 				if(currentStep==1){
-					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-					mapping = lpcfui;
+					result = context.showWizard("Select Type Mapping", true, false, intro );
+					
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
@@ -402,7 +406,7 @@ public class ReplayConformancePlugin {
 				/*
 				 * Return  final step.
 				 */
-				map = getmap(lpcfui.getMap());
+				map = getmap(mapping.getMap());
 				sem=false;
 				break;
 			default :
@@ -430,7 +434,7 @@ public class ReplayConformancePlugin {
 			return null;
 		}
 
-		TotalConformanceResult totalResult = getConformanceDetails(context, log, net,marking, setting,map);
+		TotalConformanceResult totalResult = getConformanceDetails(context, log, net,marking, setting,map,mapping.getSelectedClassifier());
 
 
 		return totalResult;
@@ -451,7 +455,7 @@ public class ReplayConformancePlugin {
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
-		suggestActions(setting, log, net);
+		suggestActions(setting, log, net,XLogInfoImpl.STANDARD_CLASSIFIER);
 
 		TotalConformanceResult total = getConformanceDetails(context, log, net, setting);
 
@@ -466,7 +470,8 @@ public class ReplayConformancePlugin {
 
 
 		Map<Transition, XEventClass> map=null;
-		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map);
+		
+		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map,XLogInfoImpl.STANDARD_CLASSIFIER);
 
 		return total;
 	}
@@ -489,7 +494,7 @@ public class ReplayConformancePlugin {
 			return null;
 		}
 		Map<Transition, XEventClass> map=null;
-		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map);
+		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map,XLogInfoImpl.STANDARD_CLASSIFIER);
 
 		return total;
 	}
@@ -498,7 +503,7 @@ public class ReplayConformancePlugin {
 	// @UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "T. Yuliani and H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl")
 	public ReplayFitnessSetting suggestSettings(PluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting settings = new ReplayFitnessSetting();
-		suggestActions(settings, log, net);
+		suggestActions(settings, log, net,XLogInfoImpl.STANDARD_CLASSIFIER);
 		return settings;
 	}
 
