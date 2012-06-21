@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JComponent;
 
@@ -36,6 +37,7 @@ import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginVariant;
+import org.processmining.framework.util.Pair;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.AttributeMap;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -47,9 +49,10 @@ import org.processmining.models.graphbased.directed.petrinet.elements.Transition
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
-import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionUI;
+import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
+import org.processmining.plugins.petrinet.replay.util.PanelIntroPlugin;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
@@ -77,20 +80,20 @@ public class ReplayPerformancePlugin {
 		}
 
 		map = null;
-		return   getPerformanceDetails(context, log, net, setting,marking);
+		return   getPerformanceDetails(context, log, net, setting,marking,XLogInfoImpl.STANDARD_CLASSIFIER);
 	}
 
 	@PluginVariant(requiredParameterLabels = { 0,1,2,3 }, variantLabel = "PerformanceDetailsSettingsWithMarking")
 	//@Plugin(name = "PerformanceDetailsSettingsWithMarking", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
 	//@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
-	public TotalPerformanceResult getPerformanceDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting,Marking marking ) {
+	public TotalPerformanceResult getPerformanceDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting,Marking marking, XEventClassifier classif ) {
 
 
 
 
 		TotalPerformanceResult performance = new TotalPerformanceResult();
 
-		XEventClasses classes = getEventClasses(log);
+		XEventClasses classes = getEventClasses(log, classif );
 		if(map==null){
 			//Map<Transition, XEventClass> 
 			map = getMapping(classes, net);
@@ -110,13 +113,18 @@ public class ReplayPerformancePlugin {
 			List<XEventClass> list = getList(trace, classes);
 			try {
 				System.out.println("Replay :"+replayedTraces);
-				List<Transition> sequence = replayer.replayTrace(marking, list, setting);
-				sequence = sortHiddenTransection(net, sequence, map);
-				String tracename = getTraceName(trace);
-				updatePerformance(net, marking, sequence, semantics, trace, performance, map, tracename);
-				replayedTraces++;
-				context.getProgress().inc();
-				System.out.println("Replayed");
+				List<Transition> sequence;
+
+				sequence = replayer.replayTrace(marking, list, setting);
+				if(sequence!=null){
+					sequence = sortHiddenTransection(net, sequence, map);
+					String tracename = getTraceName(trace);
+					updatePerformance(net, marking, sequence, semantics, trace, performance, map, tracename);
+					replayedTraces++;
+					context.getProgress().inc();
+					System.out.println("Replayed");
+				}
+
 			} catch (Exception ex) {
 				System.out.println("Failed");
 				context.log("Replay of trace " + trace + " failed: " + ex.getMessage());
@@ -349,8 +357,8 @@ public class ReplayPerformancePlugin {
 		return list;
 	}
 
-	private XEventClasses getEventClasses(XLog log) {
-		XEventClassifier classifier = XLogInfoImpl.STANDARD_CLASSIFIER;
+	private XEventClasses getEventClasses(XLog log, XEventClassifier classifier) {
+
 		XLogInfo summary = XLogInfoFactory.createLogInfo(log, classifier);
 		XEventClasses eventClasses = summary.getEventClasses(classifier);
 		return eventClasses;
@@ -392,11 +400,31 @@ public class ReplayPerformancePlugin {
 	//@Plugin(name = "PerformanceDetailsUI", returnLabels = { "Performance Total" }, returnTypes = { TotalPerformanceResult.class }, parameterLabels = {}, userAccessible = true)
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalPerformanceResult getPerformanceDetails(UIPluginContext context, XLog log, Petrinet net) {
+
+
+		// list possible classifiers
+		List<XEventClassifier> classList = new ArrayList<XEventClassifier>(log.getClassifiers());
+		// add default classifiers
+		if (!classList.contains(XLogInfoImpl.RESOURCE_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.RESOURCE_CLASSIFIER);
+		}
+		//				if (!classList.contains(XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER)){
+		//					classList.add(0, XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER);
+		//				}
+		if (!classList.contains(XLogInfoImpl.NAME_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.NAME_CLASSIFIER);
+		}
+		if (!classList.contains(XLogInfoImpl.STANDARD_CLASSIFIER)){
+			classList.add(0, XLogInfoImpl.STANDARD_CLASSIFIER);
+		}
+
+		Object[] availableEventClass = classList.toArray(new Object[classList.size()]);		
+
+
+
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
 		suggestActions(setting, log, net);
 		ReplayAnalysisUI ui = new ReplayAnalysisUI(setting);
-
-
 
 		Marking marking;
 
@@ -410,10 +438,9 @@ public class ReplayPerformancePlugin {
 			return null;
 		}
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionUI lpcfui = new LogPetrinetConnectionUI(log, net);
-
+		LogPetrinetConnectionFactoryUI mapping = new LogPetrinetConnectionFactoryUI(log, net, availableEventClass);
 		//Create map or not according to the button pressed in the UI
-		map=null;
+
 		InteractionResult result = InteractionResult.NEXT;
 		/*
 		 * The wizard loop.
@@ -423,7 +450,7 @@ public class ReplayPerformancePlugin {
 		 * Show the current step.
 		 */
 		int currentStep=0;
-		
+
 		// TODO: Insert plugin description
 		String label = "<html>" +
 				"<h2>PetriNetReplayAnalysis: Performance metrics <br/></h2><p>" +
@@ -441,14 +468,15 @@ public class ReplayPerformancePlugin {
 				"egovernment enterprise architecture. <br/>In <i>Proceedings of WS-FM 2011,8th International Workshop on " +
 				"Web Services and Formal Methods</i> <ahref=\"http://goo.gl/EmiDJ\">http://goo.gl/EmiDJ</a></span></p>"
 				+" </html>";
-				
 
-		JComponent configsimilarity = lpcfui.initComponentsDifferntMapping(label);
+
+
+		JComponent intro = new PanelIntroPlugin(label);
 		JComponent config = ui.initComponents();
-		result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
+		result = context.showWizard("Select Type Mapping", true, false, intro );
 
 
-		JComponent mapping = lpcfui.initComponents();
+
 		currentStep++;
 		boolean d=false;
 		while (sem) {
@@ -458,7 +486,7 @@ public class ReplayPerformancePlugin {
 				/*
 				 * Show the next step. 
 				 */
-				
+
 				if (currentStep == 0) {
 					currentStep = 1;
 				}
@@ -470,10 +498,11 @@ public class ReplayPerformancePlugin {
 				}
 				if(currentStep==2){
 					d=false;
+
 					result =context.showWizard("Configure Performance Settings", false, true, config);
 					ui.setWeights();
 				}
-				
+
 				break;
 			case PREV :
 				/*
@@ -484,13 +513,13 @@ public class ReplayPerformancePlugin {
 					d=false;
 				}
 				if(currentStep==1){
-					result = context.showWizard("Select Type Mapping", true, false, configsimilarity );
-					mapping = lpcfui.initComponents();
+					result = context.showWizard("Select Type Mapping", true, false, intro );
+					//mapping = lpcfui=null;//.initComponents();
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
 					currentStep--;
-					
+
 				}
 
 
@@ -499,7 +528,7 @@ public class ReplayPerformancePlugin {
 				/*
 				 * Return  final step.
 				 */
-				map = lpcfui.getMap();
+				map = getmap(mapping.getMap());
 				sem=false;
 				break;
 			default :
@@ -513,7 +542,7 @@ public class ReplayPerformancePlugin {
 			}
 		}
 
-		TotalPerformanceResult total = getPerformanceDetails(context, log, net, setting,marking);
+		TotalPerformanceResult total = getPerformanceDetails(context, log, net, setting,marking,mapping.getSelectedClassifier());
 
 		return total;
 	}
@@ -528,7 +557,18 @@ public class ReplayPerformancePlugin {
 		return total;
 	}
 
+	private Map<Transition, XEventClass> getmap(
+			Collection<Pair<Transition, XEventClass>> map) {
+		Map<Transition, XEventClass> maps= new HashMap<Transition, XEventClass>();
+		for(Pair<Transition, XEventClass> coppia:map){
+			XEventClass sec = coppia.getSecond();
+			if(!sec.toString().equals("DUMMY")){
+				maps.put(coppia.getFirst(),coppia.getSecond());
+			}
+		}
 
+		return maps;
+	}
 
 	/*@Visualizer
 	@Plugin(name = "Performance Result Visualizer", parameterLabels = "String", returnLabels = "Label of String", returnTypes = JComponent.class)
