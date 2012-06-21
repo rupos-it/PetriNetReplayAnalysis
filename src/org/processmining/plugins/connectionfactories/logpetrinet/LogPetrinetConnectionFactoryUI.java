@@ -106,11 +106,8 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 					for (Object item : boxOptions) {
 						cbBox.addItem(item);
 					}
-					if (!transition.isInvisible()) {
-						int index = preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern);
-						cbBox.setSelectedIndex(index);
-						if(index==0)
-							transition.setInvisible(true);
+					if (!transition.isInvisible()) {					
+						cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
 					} else {
 						cbBox.setSelectedItem(DUMMY);
 					}
@@ -137,10 +134,7 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 						cbBox.addItem(item);
 					}
 					if (!transition.isInvisible()) {
-						int index = preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern);
-						cbBox.setSelectedIndex(index);
-						if(index==0)
-							transition.setInvisible(true);
+						cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
 					} else {
 						cbBox.setSelectedItem(DUMMY);
 					}
@@ -167,11 +161,7 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 			if (transition.isInvisible()) {
 				cbBox.setSelectedItem(DUMMY);
 			} else {
-				//cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
-				int index = preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern);
-				cbBox.setSelectedIndex(index);
-				if(index==0)
-					transition.setInvisible(true);
+				cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
 			}
 
 			add(factory.createLabel(transition.getLabel()), "0, " + rowCounter + ", l, c");
