@@ -456,7 +456,10 @@ public class ReplayConformancePlugin {
 			Collection<Pair<Transition, XEventClass>> map) {
 		Map<Transition, XEventClass> maps= new HashMap<Transition, XEventClass>();
 		for(Pair<Transition, XEventClass> coppia:map){
-			maps.put(coppia.getFirst(),coppia.getSecond());
+			XEventClass sec = coppia.getSecond();
+			if(!sec.toString().equals("DUMMY")){
+				maps.put(coppia.getFirst(),coppia.getSecond());
+			}
 		}
 
 		return maps;

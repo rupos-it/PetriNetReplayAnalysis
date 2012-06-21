@@ -111,10 +111,10 @@ public class ReplayPerformancePlugin {
 		context.getProgress().setMaximum(log.size());
 		for (XTrace trace : log) {
 			List<XEventClass> list = getList(trace, classes);
-			//	try {
-			System.out.println("Replay :"+replayedTraces);
-			List<Transition> sequence;
 			try {
+				System.out.println("Replay :"+replayedTraces);
+				List<Transition> sequence;
+
 				sequence = replayer.replayTrace(marking, list, setting);
 				if(sequence!=null){
 					sequence = sortHiddenTransection(net, sequence, map);
@@ -124,17 +124,11 @@ public class ReplayPerformancePlugin {
 					context.getProgress().inc();
 					System.out.println("Replayed");
 				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			} catch (Exception ex) {
+				System.out.println("Failed");
+				context.log("Replay of trace " + trace + " failed: " + ex.getMessage());
 			}
-			//} catch (Exception ex) {
-			//	System.out.println("Failed");
-			//	context.log("Replay of trace " + trace + " failed: " + ex.getMessage());
-			//}
 		}
 
 		context.log("(based on a successful replay of " + replayedTraces + " out of " + log.size() + " traces)");
@@ -567,7 +561,10 @@ public class ReplayPerformancePlugin {
 			Collection<Pair<Transition, XEventClass>> map) {
 		Map<Transition, XEventClass> maps= new HashMap<Transition, XEventClass>();
 		for(Pair<Transition, XEventClass> coppia:map){
-			maps.put(coppia.getFirst(),coppia.getSecond());
+			XEventClass sec = coppia.getSecond();
+			if(!sec.toString().equals("DUMMY")){
+				maps.put(coppia.getFirst(),coppia.getSecond());
+			}
 		}
 
 		return maps;
