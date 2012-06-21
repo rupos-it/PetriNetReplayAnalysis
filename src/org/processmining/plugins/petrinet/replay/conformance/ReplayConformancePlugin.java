@@ -259,6 +259,11 @@ public class ReplayConformancePlugin {
 		}
 		setting.setAction(ReplayAction.INSERT_ENABLED_MATCH, true);
 		setting.setAction(ReplayAction.INSERT_DISABLED_MATCH, true);
+		for(String h : eventClassLabels){
+			boolean flag = transitionLabels.contains(h);
+			if(!flag)
+				System.out.println(h);
+		}
 		if (transitionLabels.containsAll(eventClassLabels)) {
 			/*
 			 * For every event class there is at least one transition. Thus,
@@ -377,7 +382,11 @@ public class ReplayConformancePlugin {
 				}
 				if(currentStep==2){
 					d=false;
-					result =context.showWizard("Configure Performance Settings", false, true, config);
+					suggestActions(setting, log, net,mapping.getSelectedClassifier());
+					 ui = new ReplayAnalysisUI(setting);
+					config = ui.initComponents();
+					result =context.showWizard("Configure Conformance Settings", false, true, config);
+
 					ui.setWeights();
 				}
 
@@ -396,6 +405,9 @@ public class ReplayConformancePlugin {
 				}
 				if(currentStep==2){
 					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
+					suggestActions(setting, log, net,mapping.getSelectedClassifier());
+					 ui = new ReplayAnalysisUI(setting);
+					 
 					currentStep--;
 
 				}

@@ -81,7 +81,7 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 		SlickerFactory factory = SlickerFactory.instance();
 
 		// set layout
-		double size[][] = { { TableLayoutConstants.FILL,TableLayoutConstants.FILL, TableLayoutConstants.FILL }, { 80,80, 70 } };
+		double size[][] = { { TableLayoutConstants.FILL,TableLayoutConstants.FILL, TableLayoutConstants.FILL }, { 80,20, 70 } };
 		TableLayout layout = new TableLayout(size);
 		setLayout(layout);
 
@@ -107,7 +107,10 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 						cbBox.addItem(item);
 					}
 					if (!transition.isInvisible()) {
-						cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
+						int index = preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern);
+						cbBox.setSelectedIndex(index);
+						if(index==0)
+							transition.setInvisible(true);
 					} else {
 						cbBox.setSelectedItem(DUMMY);
 					}
@@ -164,7 +167,11 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 			if (transition.isInvisible()) {
 				cbBox.setSelectedItem(DUMMY);
 			} else {
-				cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
+				//cbBox.setSelectedIndex(preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern));
+				int index = preSelectOption(transition.getLabel().toLowerCase(), boxOptions, pattern);
+				cbBox.setSelectedIndex(index);
+				if(index==0)
+					transition.setInvisible(true);
 			}
 
 			add(factory.createLabel(transition.getLabel()), "0, " + rowCounter + ", l, c");
