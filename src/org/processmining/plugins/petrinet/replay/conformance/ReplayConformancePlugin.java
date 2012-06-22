@@ -49,7 +49,7 @@ import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
 
-import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
+import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetAssUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
 import org.processmining.plugins.petrinet.replay.util.PanelIntroPlugin;
@@ -317,7 +317,7 @@ public class ReplayConformancePlugin {
 
 
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionFactoryUI mapping = new LogPetrinetConnectionFactoryUI(log, net, availableEventClass);
+		LogPetrinetAssUI mapping = new LogPetrinetAssUI(log, net, availableEventClass);
 		//InteractionResult result = context.showWizard("Mapping Petrinet - Log", false, true,  lpcfui.initComponents());
 
 		//Create map or not according to the button pressed in the UI
