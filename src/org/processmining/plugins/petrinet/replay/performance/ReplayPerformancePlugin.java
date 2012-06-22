@@ -49,6 +49,7 @@ import org.processmining.models.graphbased.directed.petrinet.elements.Transition
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
+import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetAssUI;
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetConnectionFactoryUI;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
@@ -438,7 +439,7 @@ public class ReplayPerformancePlugin {
 			return null;
 		}
 		//Build and show the UI to make the mapping
-		LogPetrinetConnectionFactoryUI mapping = new LogPetrinetConnectionFactoryUI(log, net, availableEventClass);
+		LogPetrinetAssUI mapping = new LogPetrinetAssUI(log, net, availableEventClass);
 		//Create map or not according to the button pressed in the UI
 
 		InteractionResult result = InteractionResult.NEXT;
