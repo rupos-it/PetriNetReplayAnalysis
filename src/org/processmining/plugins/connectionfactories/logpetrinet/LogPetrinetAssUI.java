@@ -1,10 +1,3 @@
-/***********************************************************
- * This software is part of the ProM package * http://www.processmining.org/ * *
- * Copyright (c) 2003-2008 TU/e Eindhoven * and is licensed under the * LGPL
- * License, Version 1.0 * by Eindhoven University of Technology * Department of
- * Information Systems * http://www.processmining.org * *
- ***********************************************************/
-
 package org.processmining.plugins.connectionfactories.logpetrinet;
 
 import info.clearthought.layout.TableLayout;
@@ -16,16 +9,16 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.processmining.plugins.connectionfactories.logpetrinet.*;
 
 import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClasses;
@@ -34,42 +27,29 @@ import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
 import org.deckfour.xes.model.XLog;
 import org.processmining.framework.util.ArrayUtils;
-import org.processmining.framework.util.Pair;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
+
+import com.fluxicon.slickerbox.factory.SlickerFactory;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 
-import com.fluxicon.slickerbox.factory.SlickerFactory;
+public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 
-/**
- * GUI of the Log / PetriNet Connection Factory, to choose the mapping between
- * Transitions and Events.
- * 
- * @author Jorge Munoz-Gama (jmunoz)
- */
-public class LogPetrinetConnectionFactoryUI extends JPanel {
-
-	private static final long serialVersionUID = 100662765420096368L;
-
-	// dummy event class (for unmapped transitions)
-	public final static XEventClass DUMMY = new XEventClass("DUMMY", -1) {
-		public boolean equals(Object o) {
-			return this == o;
-		}
-	};
-
-	// internal attributes
-	@SuppressWarnings("unused")
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7885986532303653221L;
+	
+	private boolean similarity=false;
 	private final XLog log;
 	private Map<Transition, JComboBox> mapTrans2ComboBox = new HashMap<Transition, JComboBox>();
 	private JComboBox classifierSelectionCbBox;
+	
+	public LogPetrinetAssUI(final XLog log, final PetrinetGraph net, Object[] availableClassifier) {
 
-	private boolean similarity=false;
-
-	public LogPetrinetConnectionFactoryUI(final XLog log, final PetrinetGraph net, Object[] availableClassifier) {
-		super();
+		super(log, net, availableClassifier);
 
 		// index for row
 		int rowCounter = 0;
@@ -170,32 +150,6 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 		}
 
 	}
-
-	/**
-	 * get all available event classes using the selected classifier, add with
-	 * NONE
-	 * 
-	 * @param log
-	 * @param selectedItem
-	 * @return
-	 */
-	private Object[] extractEventClasses(XLog log, XEventClassifier selectedItem) {
-		XLogInfo summary = XLogInfoFactory.createLogInfo(log,
-				(XEventClassifier) classifierSelectionCbBox.getSelectedItem());
-		XEventClasses eventClasses = summary.getEventClasses();
-
-		// sort event class
-		Collection<XEventClass> classes = eventClasses.getClasses();
-
-		// create possible event classes
-		Object[] arrEvClass = classes.toArray();
-		Arrays.sort(arrEvClass);
-		Object[] notMappedAct = { "NONE" };
-		Object[] boxOptions = ArrayUtils.concatAll(notMappedAct, arrEvClass);
-
-		return boxOptions;
-	}
-
 	/**
 	 * Returns the Event Option Box index of the most similar event for the
 	 * transition.
@@ -235,9 +189,9 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 		}else{
 			for (int i = 1; i < events.length; i++) {
 				String event = ((XEventClass) events[i]).toString();
-				int h = event.indexOf("+");
-				if(h>0)
-					event=event.substring(0, h);
+				//int h = event.indexOf("+");
+				//if(h>0)
+					//event=event.substring(0, h);
 				if (transition.toLowerCase().equals(event.toLowerCase())) {
 					return i;
 				}
@@ -246,37 +200,30 @@ public class LogPetrinetConnectionFactoryUI extends JPanel {
 			return 0;
 		}
 	}
-
+	
 	/**
-	 * Get the selected classifier
+	 * get all available event classes using the selected classifier, add with
+	 * NONE
 	 * 
+	 * @param log
+	 * @param selectedItem
 	 * @return
 	 */
-	public XEventClassifier getSelectedClassifier() {
-		return (XEventClassifier) classifierSelectionCbBox.getSelectedItem();
-	}
+	private Object[] extractEventClasses(XLog log, XEventClassifier selectedItem) {
+		XLogInfo summary = XLogInfoFactory.createLogInfo(log,
+				(XEventClassifier) classifierSelectionCbBox.getSelectedItem());
+		XEventClasses eventClasses = summary.getEventClasses();
 
-	public XEventClasses getClasses() {
-		XEventClassifier classifier = ((XEventClassifier) classifierSelectionCbBox.getSelectedItem());
-		XLogInfo summary = XLogInfoFactory.createLogInfo(log, classifier);
-		XEventClasses classes = summary.getEventClasses(classifier);
-		return classes;	
-	}
+		// sort event class
+		Collection<XEventClass> classes = eventClasses.getClasses();
 
-	public Collection<Pair<Transition, XEventClass>> getMap() {
-		Collection<Pair<Transition, XEventClass>> res = new HashSet<Pair<Transition,XEventClass>>();
-		for (Transition trans : mapTrans2ComboBox.keySet()) {
-			Object selectedValue = mapTrans2ComboBox.get(trans).getSelectedItem();
-			if (selectedValue instanceof XEventClass) {
-				// a real event class
-				res.add(new Pair<Transition, XEventClass>(trans, (XEventClass) selectedValue));
-			} else {
-				// this is "NONE"
-				res.add(new Pair<Transition, XEventClass>(trans, DUMMY));
-			}
-		}
-		return res;
-	}
+		// create possible event classes
+		Object[] arrEvClass = classes.toArray();
+		Arrays.sort(arrEvClass);
+		Object[] notMappedAct = { "NONE" };
+		Object[] boxOptions = ArrayUtils.concatAll(notMappedAct, arrEvClass);
 
+		return boxOptions;
+	}
 
 }
