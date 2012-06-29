@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
 import org.deckfour.xes.model.XLog;
 import org.processmining.framework.util.ArrayUtils;
+import org.processmining.framework.util.Pair;
 import org.processmining.models.graphbased.directed.petrinet.PetrinetGraph;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
 
@@ -224,6 +226,32 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 		Object[] boxOptions = ArrayUtils.concatAll(notMappedAct, arrEvClass);
 
 		return boxOptions;
+	}
+	
+	public XEventClassifier getSelectedClassifier() {
+		return (XEventClassifier) classifierSelectionCbBox.getSelectedItem();
+	}
+
+	public XEventClasses getClasses() {
+		XEventClassifier classifier = ((XEventClassifier) classifierSelectionCbBox.getSelectedItem());
+		XLogInfo summary = XLogInfoFactory.createLogInfo(log, classifier);
+		XEventClasses classes = summary.getEventClasses(classifier);
+		return classes;	
+	}
+
+	public Collection<Pair<Transition, XEventClass>> getMap() {
+		Collection<Pair<Transition, XEventClass>> res = new HashSet<Pair<Transition,XEventClass>>();
+		for (Transition trans : mapTrans2ComboBox.keySet()) {
+			Object selectedValue = mapTrans2ComboBox.get(trans).getSelectedItem();
+			if (selectedValue instanceof XEventClass) {
+				// a real event class
+				res.add(new Pair<Transition, XEventClass>(trans, (XEventClass) selectedValue));
+			} else {
+				// this is "NONE"
+				res.add(new Pair<Transition, XEventClass>(trans, DUMMY));
+			}
+		}
+		return res;
 	}
 
 }
