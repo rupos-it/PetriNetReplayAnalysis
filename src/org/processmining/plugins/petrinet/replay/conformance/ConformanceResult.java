@@ -125,4 +125,13 @@ public class ConformanceResult {
 		return tot;
 	}
 
+
+
+	public boolean isEmpty() {
+		if(consumedTokens==0 && producedTokens==0 && mapArc.isEmpty()){
+			return true;
+		}
+		return false;
+	}
+
 }
