@@ -18,10 +18,8 @@ import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
 import org.processmining.connections.logmodel.LogPetrinetConnectionImpl;
 import org.processmining.contexts.uitopia.UIPluginContext;
-import org.processmining.contexts.uitopia.annotations.UITopiaVariant;
 import org.processmining.framework.connections.ConnectionCannotBeObtained;
 import org.processmining.framework.plugin.PluginContext;
-import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.AttributeMap;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -45,8 +43,8 @@ public class ReplayFitnessPlugin {
 
 	private XEventClasses eventClasses = null;
 
-	@Plugin(name = "Fitness", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
-	@UITopiaVariant(uiLabel = "Compute Fitness", affiliation = UITopiaVariant.EHV, author = "T. Yuliani and H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "PetriNetReplayer")
+//	@Plugin(name = "Fitness", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
+//	@UITopiaVariant(uiLabel = "Compute Fitness", affiliation = UITopiaVariant.EHV, author = "T. Yuliani and H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl", pack = "PetriNetReplayer")
 	public ReplayFitness getFitness(UIPluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
 		suggestActions(setting, log, net);
@@ -57,14 +55,14 @@ public class ReplayFitnessPlugin {
 		return getFitness(context, log, net, setting);
 	}
 
-	@Plugin(name = "Fitness [PetriNetReplayer]", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
+//	@Plugin(name = "Fitness [PetriNetReplayer]", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
 	public ReplayFitness getFitness(PluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
 		suggestActions(setting, log, net);
 		return getFitness(context, log, net, setting);
 	}
 
-	@Plugin(name = "Fitness [PetriNetReplayer]", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
+//	@Plugin(name = "Fitness [PetriNetReplayer]", returnLabels = { "Fitness" }, returnTypes = { ReplayFitness.class }, parameterLabels = {}, userAccessible = true)
 	public ReplayFitness getFitness(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting) {
 		/*
 		 * try {
