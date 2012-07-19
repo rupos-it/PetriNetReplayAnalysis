@@ -138,8 +138,6 @@
 							<dependency name="LogDialog"/>
 							<dependency name="Log"/>
 							<dependency name="LogMerge"/>
-							<dependency name="PetriNetReplayer"/>
-
 						</package>
 					</packages>
 				</echoxml>
