@@ -186,33 +186,35 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		ReplayStateExpander<C> expander = new ReplayStateExpander<C>(settings, net, semantics, map, addOperator);
 		MultiThreadedSearcher<ReplayState<C>> searcher = new MultiThreadedSearcher<ReplayState<C>>(expander,
 				new ExpandCollection<ReplayState<C>>() {
-			private int i=0;
+			private int i=0;//
 			private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>();/*new Comparator<ReplayState<C>>() {
 			
 				@Override
 				public int compare(ReplayState<C> o1, ReplayState<C> o2) {
-					if (o1.trace.size()==o2.trace.size()){
+					/*if (o1.trace.size()==o2.trace.size()){
 						return o1.cost.compareTo(o2.cost);
 					}
 					return o1.trace.size()-o2.trace.size();
 					
 
-					/*int c = o1.cost.compareTo(o2.cost);
-
+					int c = o1.cost.compareTo(o2.cost);
+					
+					c=1;
 					if (c != 0) {
-						System.out.println("a");
-						return c;
+						//System.out.println("a");
+						return o1.cost.compareTo(o2.cost);
 					}else{
 						if(o1.trace.size()>o2.trace.size()){
-							System.out.println(" b");
-							return 1;
+							//System.out.println(" b");
+							return 0;
 						}else{
-							System.out.println(" c");
-							return -o1.compareTo(o2);
+							//System.out.println(" c");
+							return 1;
 						}
 					}
 				}
-			});/*new Comparator<ReplayState<C>>() {
+			});
+			/*new Comparator<ReplayState<C>>() {
 
 				@Override
 				public int compare(ReplayState<C> o1, ReplayState<C> o2) {
@@ -299,7 +301,7 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 			public ReplayState<C> pop() {
 				ReplayState<C> head = states.first();
 				//System.out.println(head.cost+" "+head.marking);
-				//System.out.println(head.transition);//+" "+head.trace);
+				//System.out.println(" "+head.trace);//+head.transition);
 				//System.out.println(states);
 				states.remove(head);
 				//stat.add(head);

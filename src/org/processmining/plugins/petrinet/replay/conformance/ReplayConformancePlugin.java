@@ -93,10 +93,11 @@ public class ReplayConformancePlugin {
 				System.out.println("Replay :" + trace.getAttributes().get("concept:name"));
 				context.getProgress().inc();
 				List<Transition> sequence = replayer.replayTrace(marking, list, setting);
+				System.out.println("Replayed setting list "+setting+list);
 				String tracename = getTraceName(trace);
 				updateConformance(net, marking, sequence, semantics, totalResult,tracename);
 				replayedTraces++;
-				System.out.println("Replayed"+sequence);
+				System.out.println("Replayed sequence "+sequence);
 
 			} catch (Exception ex) {
 				System.out.println("Failed");

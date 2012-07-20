@@ -114,8 +114,8 @@ public class ReplayStateExpander<C extends ReplayCost & Comparable<? super C>> i
 			//System.out.println("-cost:"+state.cost);
 			//System.out.println("");
 		}
-		if(state.cost.hashCode()>99){
-			//System.out.println("cost:"+state.cost);
+		if(state.cost.hashCode()>999){
+			System.out.println("cost:"+state.cost);
 		}
 		if (settings.isFinal(state.marking, state.trace)) {
 			/*

@@ -63,5 +63,6 @@
 	<classpathentry kind="lib" path="packagelib/LogMerge.jar"/>
 	<classpathentry kind="lib" path="stdlib/EfficientStorage.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BPMNMeasures"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PNetReplayer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
