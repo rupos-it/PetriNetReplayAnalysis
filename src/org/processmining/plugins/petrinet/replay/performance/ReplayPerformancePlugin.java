@@ -3,10 +3,13 @@ package org.processmining.plugins.petrinet.replay.performance;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import java.util.Set;
 
@@ -26,7 +29,9 @@ import org.deckfour.xes.info.impl.XLogInfoImpl;
 import org.deckfour.xes.model.XEvent;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.XTrace;
+import org.deckfour.xes.model.buffered.XTraceBufferedImpl;
 import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
+import org.deckfour.xes.model.impl.XTraceImpl;
 
 import org.processmining.connections.logmodel.LogPetrinetConnectionImpl;
 import org.processmining.contexts.uitopia.UIPluginContext;
@@ -106,13 +111,33 @@ public class ReplayPerformancePlugin {
 		context.getProgress().setMinimum(0);
 		context.getProgress().setMaximum(log.size());
 		for (XTrace trace : log) {
-			List<XEventClass> list = getList(trace, classes);
+			XTrace newTrace = new XTraceImpl(trace.getAttributes());
+			newTrace.addAll(trace);
+			Collections.sort(
+					newTrace,
+					new Comparator<XEvent> () {
+						@Override
+						public int compare(XEvent arg0, XEvent arg1) {
+							XAttributeTimestampImpl date1  = (XAttributeTimestampImpl)(arg0.getAttributes().get("time:timestamp"));
+							long d1 = date1.getValue().getTime();
+							XAttributeTimestampImpl date2  = (XAttributeTimestampImpl)(arg1.getAttributes().get("time:timestamp"));
+							long d2 = date2.getValue().getTime();
+							if (d1 > d2)
+								return 1;
+							else if (d1 < d2)
+								return -1;
+							return 0;
+						}
+						
+					}
+			);
+			List<XEventClass> list = getList(newTrace, classes);
 			try {
 				System.out.println("Replay :"+replayedTraces);
 				List<Transition> sequence = replayer.replayTrace(marking, list, setting);
 				sequence = sortHiddenTransection(net, sequence, map);
-				String tracename = getTraceName(trace);
-				updatePerformance(net, marking, sequence, semantics, trace, performance, map, tracename);
+				String tracename = getTraceName(newTrace);
+				updatePerformance(net, marking, sequence, semantics, newTrace, performance, map, tracename);
 				replayedTraces++;
 				context.getProgress().inc();
 				System.out.println("Replayed");
