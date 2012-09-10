@@ -42,6 +42,12 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 	/**
 	 * 
 	 */
+	// dummy event class (for unmapped transitions)
+		public final static XEventClass empty = new XEventClass("empty", -2) {
+			public boolean equals(Object o) {
+				return this == o;
+			}
+		};
 	private static final long serialVersionUID = -7885986532303653221L;
 	
 	private boolean similarity=false;
@@ -177,7 +183,7 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 
 			int index = 0;
 			float simOld = Float.MIN_VALUE;
-			for (int i = 1; i < events.length; i++) {
+			for (int i = 2; i < events.length; i++) {
 				String event = ((XEventClass) events[i]).toString();
 				float sim = metric.getSimilarity(transition, event);
 
@@ -189,7 +195,7 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 
 			return index;
 		}else{
-			for (int i = 1; i < events.length; i++) {
+			for (int i = 2; i < events.length; i++) {
 				String event = ((XEventClass) events[i]).toString();
 				//int h = event.indexOf("+");
 				//if(h>0)
@@ -222,7 +228,7 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 		// create possible event classes
 		Object[] arrEvClass = classes.toArray();
 		Arrays.sort(arrEvClass);
-		Object[] notMappedAct = { "NONE" };
+		Object[] notMappedAct = { "NONE","empty" };
 		Object[] boxOptions = ArrayUtils.concatAll(notMappedAct, arrEvClass);
 
 		return boxOptions;
@@ -248,7 +254,12 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 				res.add(new Pair<Transition, XEventClass>(trans, (XEventClass) selectedValue));
 			} else {
 				// this is "NONE"
+				if(selectedValue.equals("NONE")){
 				res.add(new Pair<Transition, XEventClass>(trans, DUMMY));
+				}
+				if(selectedValue.equals("empty")){
+					res.add(new Pair<Transition, XEventClass>(trans, empty));
+				}
 			}
 		}
 		return res;
