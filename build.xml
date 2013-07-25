@@ -7,7 +7,7 @@
 		<property name="lib" location="lib" />
 		<property name="dist" location="dist" />
 		<property name="release" location="latestrelease" />
-		<property name="version" value="6.1.${env.BUILD_NUMBER}" />
+		<property name="version" value="6.3.${env.BUILD_NUMBER}" />
 		<property name="project" value="PetriNetReplayAnalysis" />
 
 		<!-- Set the os to win32, win64, lin32, lin64, mac, or all -->
