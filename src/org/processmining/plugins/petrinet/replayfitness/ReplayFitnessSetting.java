@@ -12,7 +12,7 @@ public class ReplayFitnessSetting implements ReplaySettings<ReplayFitnessCost> {
 
 	private final Map<ReplayAction, Integer> weights;
 	private final Map<ReplayAction, Boolean> actions;
-
+	private ReplayFitnessCost MaximalCost;
 	public ReplayFitnessSetting() {
 		actions = new HashMap<ReplayAction, Boolean>();
 		actions.put(ReplayAction.INSERT_ENABLED_MATCH, true);
@@ -29,6 +29,7 @@ public class ReplayFitnessSetting implements ReplaySettings<ReplayFitnessCost> {
 		weights.put(ReplayAction.INSERT_ENABLED_MISMATCH, 100);
 		weights.put(ReplayAction.INSERT_DISABLED_MATCH, 100);
 		weights.put(ReplayAction.INSERT_DISABLED_MISMATCH, 1000);
+		MaximalCost = new ReplayFitnessCost(Integer.MAX_VALUE, this);
 	}
 
 	public Integer getWeight(ReplayAction action) {
@@ -44,7 +45,11 @@ public class ReplayFitnessSetting implements ReplaySettings<ReplayFitnessCost> {
 	}
 
 	public ReplayFitnessCost getMaximalCost() {
-		return new ReplayFitnessCost(Integer.MAX_VALUE, this);
+		return MaximalCost; //new ReplayFitnessCost(Integer.MAX_VALUE, this);
+	}
+	
+	public void setMaximalCost(Integer i) {
+		MaximalCost = new ReplayFitnessCost(i, this);
 	}
 
 	public void setAction(ReplayAction action, boolean isEnabled) {

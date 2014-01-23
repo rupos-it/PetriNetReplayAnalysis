@@ -1,12 +1,16 @@
 package org.processmining.plugins.petrinet.replay.conformance;
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import java.util.Vector;
 
@@ -37,6 +41,9 @@ import org.processmining.framework.plugin.PluginContext;
 import org.processmining.framework.plugin.annotations.Plugin;
 import org.processmining.framework.plugin.annotations.PluginVariant;
 import org.processmining.framework.util.Pair;
+import org.processmining.framework.util.collection.AlphanumComparator;
+import org.processmining.models.connections.petrinets.PNRepResultAllRequiredParamConnection;
+import org.processmining.models.connections.petrinets.PNRepResultConnection;
 import org.processmining.models.connections.petrinets.behavioral.InitialMarkingConnection;
 import org.processmining.models.graphbased.AttributeMap;
 import org.processmining.models.graphbased.directed.petrinet.Petrinet;
@@ -50,55 +57,162 @@ import org.processmining.models.semantics.petrinet.PetrinetSemantics;
 import org.processmining.models.semantics.petrinet.impl.PetrinetSemanticsFactory;
 
 import org.processmining.plugins.connectionfactories.logpetrinet.LogPetrinetAssUI;
+import org.processmining.plugins.connectionfactories.logpetrinet.TransEvClassMapping;
 import org.processmining.plugins.petrinet.replay.ReplayAction;
 import org.processmining.plugins.petrinet.replay.Replayer;
 import org.processmining.plugins.petrinet.replay.util.PanelIntroPlugin;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisConnection;
 import org.processmining.plugins.petrinet.replay.util.ReplayAnalysisUI;
+import org.processmining.plugins.petrinet.replayer.PNLogReplayer;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
 import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting;
+import org.processmining.plugins.petrinet.replayresult.PNRepResult;
+import org.processmining.plugins.petrinet.replayresult.StepTypes;
+import org.processmining.plugins.petrinet.visualization.AlignmentConstants;
+import org.processmining.plugins.replayer.replayresult.SyncReplayResult;
 
 
-@Plugin(name = "PN Conformace Analysis", returnLabels = { "Conformace Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {"Log", "Petrinet", "ReplayFitnessSetting", "Marking"}, userAccessible = true)
-public class ReplayConformancePlugin {
+@Plugin(name = "PN Conformace Analysis New", returnLabels = { "Conformace Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {"Log", "Petrinet", "PNRepResult", "Marking"}, userAccessible = true)
+public class ReplayConformancePluginNew {
 
-
+	private boolean getColor(StepTypes stepTypes) {
+		switch (stepTypes){
+		case L : 
+			return true; //AlignmentConstants.MOVELOGCOLOR;
+		case MINVI : 
+			return true;//AlignmentConstants.MOVEMODELINVICOLOR;
+		case MREAL : 
+			return false; //AlignmentConstants.MOVEMODELREALCOLOR;
+		case LMNOGOOD : 
+			return false;//AlignmentConstants.MOVESYNCVIOLCOLOR;
+		case LMGOOD : 
+			return true;// AlignmentConstants.MOVESYNCCOLOR;
+		case LMREPLACED:
+			return false;//AlignmentConstants.MOVEREPLACEDCOLOR;
+		case LMSWAPPED:
+			return false;// AlignmentConstants.MOVESWAPPEDCOLOR;
+		default :
+				return false; // unknown
+		}
+	}
 	
+	public Transition getTranstoMap(TransEvClassMapping mapping, XEventClass event){
+		for(Transition t: mapping.keySet()){
+			 XEventClass e = mapping.get(t);
+			if(e==event){
+				
+				return t;
+			}
+		}
+		
+		return null;
+	}
 
-	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, Marking marking, ReplayFitnessSetting setting,Map<Transition, XEventClass> map, XEventClassifier classif   ) {
+	public List<Transition> getListTransition(PNRepResult logReplayResult,
+			String tracename, XLog log,TransEvClassMapping mapping) {
+		List<Transition> result = new LinkedList<Transition>();
+
+		for (SyncReplayResult res : logReplayResult) {
+
+			SortedSet<Integer> traceIndex = res.getTraceIndex();
+			XConceptExtension ce = XConceptExtension.instance();
+			for (int index : traceIndex) {
+				String name = ce.extractName(log.get(index));
+				if (name == tracename) {
+					int x = 0;
+					List<Object> lobj = res.getNodeInstance();
+					for (int i=0;i<lobj.size();i++) {
+						Object obj = lobj.get(i);
+						if (obj instanceof Transition) {
+							Transition t = ((Transition) obj);
+							if (getColor(res.getStepTypes().get(x))) {
+								result.add(t);
+							} else {
+								if (res.getNodeInstance().size() - x + 2 >= 0) {
+									StepTypes tt = res.getStepTypes()
+											.get(x + 1);
+									StepTypes tt1 = res.getStepTypes().get(
+											x + 2);
+									if (tt == StepTypes.MINVI
+											& tt1 == StepTypes.MINVI) {
+										i=i+2;
+										x=x+1;
+									}
+								}
+
+							}
+						}else{
+							if(obj instanceof XEventClass){
+								XEventClass e = ((XEventClass) obj);
+								Transition t = getTranstoMap(mapping,e);
+								if (getColor(res.getStepTypes().get(x))) {
+									result.add(t);
+								} 
+							}
+							
+							
+						}
+						
+						x++;
+					}
+
+				}
+
+			}
+			// reformat node instance list
+			// List<Object> result = new LinkedList<Object>();
+
+			// create combobox
+			/*
+			 * SortedSet<String> caseIDSets = new TreeSet<String>(new
+			 * AlphanumComparator()); XConceptExtension ce =
+			 * XConceptExtension.instance(); for (int index :
+			 * res.getTraceIndex()) { String name =
+			 * ce.extractName(log.get(index)); if (name == null) { name =
+			 * String.valueOf(index); } caseIDSets.add(name); } int caseIDSize =
+			 * caseIDSets.size();
+			 */
+		}
+		System.out.println(result);
+		return result;
+	}
+
+	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, Marking marking, PNRepResult resultpn  ) {
 		TotalConformanceResult totalResult = new TotalConformanceResult();
 		totalResult.setTotal(new ConformanceResult("Total"));
 		totalResult.setList(new Vector<ConformanceResult>());
 
 		//= XLogInfoImpl.STANDARD_CLASSIFIER;
-		XEventClasses classes = getEventClasses(log, classif );
-		if(map==null){
-			//Map<Transition, XEventClass> 
-			map = getMapping(classes, net);
-		}
-		context.getConnectionManager().addConnection(new LogPetrinetConnectionImpl(log, classes, net, map));
-
-		PetrinetSemantics semantics = PetrinetSemanticsFactory.regularPetrinetSemantics(Petrinet.class);
-
-		Replayer<ReplayFitnessCost> replayer = new Replayer<ReplayFitnessCost>(context, net, semantics, map,
-				ReplayFitnessCost.addOperator);
+	
+		
 
 		int replayedTraces = 0;
 		int i =0;
 		context.getProgress().setMinimum(0);
 		context.getProgress().setMaximum(log.size());
+		TransEvClassMapping mapping=null;
+		try {
+			PNRepResultAllRequiredParamConnection conn = context.getConnectionManager().getFirstConnection(
+					PNRepResultAllRequiredParamConnection.class, context, resultpn);
+
+			//net = conn.getObjectWithRole(PNRepResultConnection.PN);
+			//log = conn.getObjectWithRole(PNRepResultConnection.LOG);
+			mapping = conn.getObjectWithRole(PNRepResultAllRequiredParamConnection.TRANS2EVCLASSMAPPING);
+		} catch (Exception exc) {
+			context.log("No mapping can be found for this log replay result");
+		}
 		for (XTrace trace : log) {
-			List<XEventClass> list = getList(trace, classes);
+			
 			try {
 				System.out.println("Replay :" + ++i);
 				context.getProgress().inc();
 				String tracename = getTraceName(trace);
 				System.out.println("Replayed "+ tracename);
-				List<Transition> sequence = replayer.replayTrace(marking, list, setting);
+				List<Transition> sequence = getListTransition(resultpn,tracename,log,mapping);//replayer.replayTrace(marking, list, setting);
 				
-				updateConformance(net, marking, sequence, semantics, totalResult,tracename);
+				updateConformance(net, marking, sequence, totalResult,tracename);
 				replayedTraces++;
-				System.out.println("ok!");
+				System.out.println("Replayed Ok!");
 
 			} catch (Exception ex) {
 				System.out.println("Failed");
@@ -127,7 +241,7 @@ public class ReplayConformancePlugin {
 	}
 
 
-	private void updateConformance(Petrinet net, Marking initMarking, List<Transition> sequence, PetrinetSemantics semantics, TotalConformanceResult totalResult, String tracename) {
+	private void updateConformance(Petrinet net, Marking initMarking, List<Transition> sequence, TotalConformanceResult totalResult, String tracename) {
 		Marking marking = new Marking(initMarking);
 		int producedTokens = marking.size();
 		int consumedTokens = 0;
@@ -246,209 +360,16 @@ public class ReplayConformancePlugin {
 	}
 
 
-	private void suggestActions(ReplayFitnessSetting setting, XLog log, Petrinet net,XEventClassifier classif) {
-		boolean hasInvisibleTransitions = false;
-		Collection<String> transitionLabels = new HashSet<String>();
-		for (Transition transition : net.getTransitions()) {
-			transitionLabels.add((String) transition.getAttributeMap().get(AttributeMap.LABEL));
-			if (transition.isInvisible()) {
-				hasInvisibleTransitions = true;
-			}
-		}
-		Collection<String> eventClassLabels = new HashSet<String>();
-		for (XEventClass eventClass : getEventClasses(log, classif).getClasses()) {
-			eventClassLabels.add(eventClass.getId());
-		}
-		setting.setAction(ReplayAction.INSERT_ENABLED_MATCH, true);
-		setting.setAction(ReplayAction.INSERT_DISABLED_MATCH, true);
-		for(String h : eventClassLabels){
-			boolean flag = transitionLabels.contains(h);
-			if(!flag)
-				System.out.println(h);
-		}
-		if (transitionLabels.containsAll(eventClassLabels)) {
-			/*
-			 * For every event class there is at least one transition. Thus,
-			 * there is always a matching transition.
-			 */
-			setting.setAction(ReplayAction.REMOVE_HEAD, false);
-			setting.setAction(ReplayAction.INSERT_ENABLED_MISMATCH, false);
-			setting.setAction(ReplayAction.INSERT_DISABLED_MISMATCH, false);
-		} else {
-			setting.setAction(ReplayAction.REMOVE_HEAD, true);
-			setting.setAction(ReplayAction.INSERT_ENABLED_MISMATCH, true);
-			setting.setAction(ReplayAction.INSERT_DISABLED_MISMATCH, true);
-		}
-		if (hasInvisibleTransitions || !eventClassLabels.containsAll(transitionLabels)) {
-			setting.setAction(ReplayAction.INSERT_ENABLED_INVISIBLE, true);
-		} else {
-			/*
-			 * There are no explicit invisible transitions and all transitions
-			 * correspond to event classes.
-			 */
-			setting.setAction(ReplayAction.INSERT_ENABLED_INVISIBLE, false);
-		}
-	}
+	
 
 	// Rupos public methos
 
 	//@Plugin(name = "ConformaceDetailsUI", returnLabels = { "Conformace Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {}, userAccessible = true)
-	@PluginVariant(requiredParameterLabels = { 0,1})
+	@PluginVariant(requiredParameterLabels = { 0,1,2})
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
-	public TotalConformanceResult getConformanceDetails(UIPluginContext context, XLog log, Petrinet net) {
+	public TotalConformanceResult getConformanceDetails(UIPluginContext context, XLog log, Petrinet net,PNRepResult resultpn) {
 		
-		//context.showWizard("Configure Conformance Settings", true, false, ui.initComponents());
-
-		// list possible classifiers
-		List<XEventClassifier> classList = new ArrayList<XEventClassifier>(log.getClassifiers());
-		// add default classifiers
-		if (!classList.contains(XLogInfoImpl.RESOURCE_CLASSIFIER)){
-			classList.add(0, XLogInfoImpl.RESOURCE_CLASSIFIER);
-		}
-		//				if (!classList.contains(XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER)){
-		//					classList.add(0, XLogInfoImpl.LIFECYCLE_TRANSITION_CLASSIFIER);
-		//				}
-		if (!classList.contains(XLogInfoImpl.NAME_CLASSIFIER)){
-			classList.add(0, XLogInfoImpl.NAME_CLASSIFIER);
-		}
-		if (!classList.contains(XLogInfoImpl.STANDARD_CLASSIFIER)){
-			classList.add(0, XLogInfoImpl.STANDARD_CLASSIFIER);
-		}
-
-		Object[] availableEventClass = classList.toArray(new Object[classList.size()]);		
-
-
-		//Build and show the UI to make the mapping
-		LogPetrinetAssUI mapping = new LogPetrinetAssUI(log, net, availableEventClass);
-		//InteractionResult result = context.showWizard("Mapping Petrinet - Log", false, true,  lpcfui.initComponents());
-
-		//Create map or not according to the button pressed in the UI
-		Map<Transition, XEventClass> map=null;
-		InteractionResult result = InteractionResult.NEXT;
-		/*
-		 * The wizard loop.
-		 */
-		boolean sem=true;
-		/*
-		 * Show the current step.
-		 */
-		int currentStep=0;
-
-		// TODO: Insert plugin description
-		String label = "<html>"+
-				"<h2>PetriNetReplayAnalysis: Conformance metrics <br></h2>" +
-				"<p>This package implement the algorithms described on this article<sup>1</sup>.<br/>" +
-				"<br/>This plugin replayed a log events on the bussiness process model. The" +
-				" model is a Petri net and reproduces a bussiness process. <br/>" +
-				"<br/>The result of Conformance plugin is a set Petri nets with annoted for all " +
-				"place remaining, missing token and transition force enabled for all trace of log. <br> </p>" +
-				"<br/><br/><p>The user guide for this plugin is <a href=\"https://svn.win.tue.nl/repos/prom/Documentation/\">" +
-				"here </a>https://svn.win.tue.nl/repos/prom/Documentation/PetriNetReplayAnalysis.pdf</p>" +
-				"<br/><br/><p>The source code for this plugin is <a href=\"https://github.com/rupos-it/PetriNetReplayAnalysis\">here </a>" +
-				"https://github.com/rupos-it/PetriNetReplayAnalysis</p><br/><br/><p><span style=\"font-size:8px;\"><sup>1</sup>" +
-				"Roberto Bruni, Andrea Corradini, Gianluigi Ferrari, Tito Flagella, Roberto Guanciale, and " +
-				"Giorgio O. Spagnolo. Applying process analysis to the italian egovernment enterprise architecture. " +
-				"<br/>In <i>Proceedings of WS-FM 2011, 8th International Workshop on Web Services and Formal Methods</i>" +
-				"<a href=\"http://goo.gl/EmiDJ\">http://goo.gl/EmiDJ</a></span></p>"+	
-				" </html>";
-		
-
-		JComponent intro = new PanelIntroPlugin(label);
-		ReplayFitnessSetting setting = new ReplayFitnessSetting();
-		setting.setMaximalCost(550);
-		//suggestActions(setting, log, net,mapping.getSelectedClassifier());
-		setting.setAction(ReplayAction.INSERT_ENABLED_INVISIBLE, true);
-		setting.setAction(ReplayAction.INSERT_DISABLED_MATCH, true);
-		setting.setAction(ReplayAction.REMOVE_HEAD, false);
-		setting.setAction(ReplayAction.INSERT_ENABLED_MISMATCH, false);
-		setting.setAction(ReplayAction.INSERT_DISABLED_MISMATCH, false);
-		setting.setAction(ReplayAction.INSERT_ENABLED_MATCH, true);
-		//setting.setAction(ReplayAction.INSERT_DISABLED_MATCH, true);
-		ReplayAnalysisUI ui = new ReplayAnalysisUI(setting);
-		
-		JComponent config = ui.initComponents();
-		result = context.showWizard("Select Type Mapping", true, false, intro );
-
-
-		
-		currentStep++;
-		boolean d=false;
-		while (sem) {
-
-			switch (result) {
-			case NEXT :
-				/*
-				 * Show the next step. 
-				 */
-
-				if (currentStep == 0) {
-					currentStep = 1;
-				}
-				if(currentStep==1){
-					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
-					currentStep++;
-					d=true;
-					break;
-				}
-				if(currentStep==2){
-					d=false;
-					//suggestActions(setting, log, net,mapping.getSelectedClassifier());
-					setting.setAction(ReplayAction.INSERT_ENABLED_INVISIBLE, true);
-					setting.setAction(ReplayAction.INSERT_DISABLED_MATCH, true);
-					setting.setAction(ReplayAction.REMOVE_HEAD, false);
-					setting.setAction(ReplayAction.INSERT_ENABLED_MISMATCH, false);
-					setting.setAction(ReplayAction.INSERT_DISABLED_MISMATCH, false);
-					setting.setAction(ReplayAction.INSERT_ENABLED_MATCH, true);
-					 ui = new ReplayAnalysisUI(setting);
-					config = ui.initComponents();
-					result =context.showWizard("Configure Conformance Settings", false, true, config);
-
-					ui.setWeights();
-				}
-
-				break;
-			case PREV :
-				/*
-				 * Move back. 
-				 */
-				if(d){
-					currentStep--;
-					d=false;
-				}
-				if(currentStep==1){
-					result = context.showWizard("Select Type Mapping", true, false, intro );
-					
-				}
-				if(currentStep==2){
-					result =context.showWizard("Mapping Petrinet - Log", false, false, mapping );
-					suggestActions(setting, log, net,mapping.getSelectedClassifier());
-					 ui = new ReplayAnalysisUI(setting);
-					 
-					currentStep--;
-
-				}
-
-
-				break;
-			case FINISHED :
-				/*
-				 * Return  final step.
-				 */
-				map = getmap(mapping.getMap());
-				sem=false;
-				break;
-			default :
-				/*
-				 * Should not occur.
-				 */
-				context.log("press Cancel");
-				context.getFutureResult(0).cancel(true);
-				return null;
-			}
-		}
-		//if (result == InteractionResult.FINISHED) {
-		//	 map = lpcfui.getMap();
-		//}
+	
 
 		Marking marking;
 
@@ -462,27 +383,48 @@ public class ReplayConformancePlugin {
 			return null;
 		}
 
-		TotalConformanceResult totalResult = getConformanceDetails(context, log, net,marking, setting,map,mapping.getSelectedClassifier());
+		TotalConformanceResult totalResult = getConformanceDetails(context, log, net,marking,resultpn);
 
 
 		return totalResult;
 	}
 
-	private Map<Transition, XEventClass> getmap(
-			Collection<Pair<Transition, XEventClass>> map) {
-		Map<Transition, XEventClass> maps= new HashMap<Transition, XEventClass>();
-		for(Pair<Transition, XEventClass> coppia:map){
-			XEventClass sec = coppia.getSecond();
-			if(!sec.toString().equals("DUMMY")){
-				maps.put(coppia.getFirst(),coppia.getSecond());
-			}
+	@PluginVariant(requiredParameterLabels = { 0,1})
+	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
+	public TotalConformanceResult getConformanceDetails(UIPluginContext context, XLog log, Petrinet net) {
+		
+		PNLogReplayer plogr = new PNLogReplayer();
+		PNRepResult resultpn=null;
+		try{
+		 resultpn =  plogr.replayLogGUI(context, net, log);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		
+		Marking marking;
+
+		try {
+			InitialMarkingConnection connection = context.getConnectionManager().getFirstConnection(
+					InitialMarkingConnection.class, context, net);
+			marking = connection.getObjectWithRole(InitialMarkingConnection.MARKING);
+		} catch (ConnectionCannotBeObtained ex) {
+			context.log("Petri net lacks initial marking");
+			context.getFutureResult(0).cancel(true);
+			return null;
 		}
 
-		return maps;
+		TotalConformanceResult totalResult = getConformanceDetails(context, log, net,marking,resultpn);
+
+
+		return totalResult;
 	}
 
+	
+
 	//@Plugin(name = "ConformanceDetails", returnLabels = { "Conformance Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {}, userAccessible = true)
-	@PluginVariant(requiredParameterLabels = { 0,1 })
+	/*@PluginVariant(requiredParameterLabels = { 0,1 })
 	@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net) {
 		ReplayFitnessSetting setting = new ReplayFitnessSetting();
@@ -492,17 +434,17 @@ public class ReplayConformancePlugin {
 
 
 		return total;
-	}
+	}*/
 
 	//@Plugin(name = "ConformanceDetailsSettingsWithMarking", returnLabels = { "Conformance Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {}, userAccessible = true)
 	//@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	@PluginVariant(requiredParameterLabels = { 0,1,2,3 })
-	public TotalConformanceResult getFitnessDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting, Marking marking) {
+	public TotalConformanceResult getFitnessDetails(PluginContext context, XLog log, Petrinet net, PNRepResult resultpn, Marking marking) {
 
 
 		Map<Transition, XEventClass> map=null;
 		
-		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map,XLogInfoImpl.STANDARD_CLASSIFIER);
+		TotalConformanceResult total = getConformanceDetails(context, log, net, marking,resultpn);
 
 		return total;
 	}
@@ -510,7 +452,7 @@ public class ReplayConformancePlugin {
 	//@Plugin(name = "ConformanceDetailsSettings", returnLabels = { "Conformance Total" }, returnTypes = { TotalConformanceResult.class }, parameterLabels = {}, userAccessible = true)
 	//@UITopiaVariant(affiliation = "Department of Computer Science University of Pisa", author = "R.Guanciale,G.Spagnolo et al.", email = "spagnolo@di.unipi.it", pack = "PetriNetReplayAnalysis")
 	@PluginVariant(requiredParameterLabels = { 0,1,2 })
-	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, ReplayFitnessSetting setting) {
+	public TotalConformanceResult getConformanceDetails(PluginContext context, XLog log, Petrinet net, PNRepResult resultpn) {
 
 		Marking marking;
 
@@ -525,18 +467,12 @@ public class ReplayConformancePlugin {
 			return null;
 		}
 		Map<Transition, XEventClass> map=null;
-		TotalConformanceResult total = getConformanceDetails(context, log, net, marking, setting,map,XLogInfoImpl.STANDARD_CLASSIFIER);
+		TotalConformanceResult total = getConformanceDetails(context, log, net, marking,resultpn );
 
 		return total;
 	}
 
-	@Plugin(name = "FitnessSuggestSettings", returnLabels = { "Settings" }, returnTypes = { ReplayFitnessSetting.class }, parameterLabels = {}, userAccessible = true)
-	// @UITopiaVariant(affiliation = UITopiaVariant.EHV, author = "T. Yuliani and H.M.W. Verbeek", email = "h.m.w.verbeek@tue.nl")
-	public ReplayFitnessSetting suggestSettings(PluginContext context, XLog log, Petrinet net) {
-		ReplayFitnessSetting settings = new ReplayFitnessSetting();
-		suggestActions(settings, log, net,XLogInfoImpl.STANDARD_CLASSIFIER);
-		return settings;
-	}
+
 
 
 

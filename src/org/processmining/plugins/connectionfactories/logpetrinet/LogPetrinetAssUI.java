@@ -82,7 +82,7 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 				"0, " + rowCounter + ", 1, " + rowCounter);
 		rowCounter++;
 
-		final String invisibleTransitionRegEx = "t[0-9]+|(tr[0-9]+)|(silent)|(tau)|(skip)|(invi)";
+		final String invisibleTransitionRegEx = "t[0-9]+|(tr[0-9]+)|(silent)|(tau)|(skip)|(invis)";
 		final Pattern pattern = Pattern.compile(invisibleTransitionRegEx);
 		// add 1:1
 		ChangeListener changeListener = new ChangeListener() {
@@ -208,16 +208,14 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 
 			return index;
 		} else {
+			System.out.println("new");
 			for (int i = 2; i < events.length; i++) {
-				String event = ((XEventClass) events[i]).toString();
-				// int h = event.indexOf("+");
-				// if(h>0)
-				// event=event.substring(0, h);
-				if (transition.toLowerCase().equals(event.toLowerCase())) {
+				String event = ((XEventClass) events[i]).toString().toLowerCase().trim();
+				
+				if (transition.toLowerCase().trim().equals(event)) {
 					return i;
 				}
 			}
-
 			return 0;
 		}
 	}
@@ -275,6 +273,7 @@ public class LogPetrinetAssUI extends LogPetrinetConnectionFactoryUI {
 					res.add(new Pair<Transition, XEventClass>(trans, DUMMY));
 				}
 				if (selectedValue.equals("empty")) {
+					trans.setInvisible(false);
 					res.add(new Pair<Transition, XEventClass>(trans, empty));
 				}
 			}

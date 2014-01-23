@@ -2,9 +2,11 @@ package org.processmining.plugins.petrinet.replay;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import org.processmining.framework.plugin.PluginContext;
@@ -14,6 +16,8 @@ import org.processmining.models.graphbased.directed.petrinet.Petrinet;
 import org.processmining.models.graphbased.directed.petrinet.elements.Transition;
 import org.processmining.models.semantics.petrinet.Marking;
 import org.processmining.models.semantics.petrinet.PetrinetSemantics;
+import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessCost;
+import org.processmining.plugins.petrinet.replayfitness.ReplayFitnessSetting;
 
 /**
  * Cost-based Petri net trace replayer.
@@ -156,7 +160,7 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public List<Transition> replayTrace(Marking initialMarking, List<? extends Object> trace, ReplaySettings<C> settings)
+	public List<Transition> replayTrace(Marking initialMarking, List<? extends Object> trace, final ReplaySettings<C> settings)
 			throws InterruptedException, ExecutionException {
 		/*
 		 * Initialize the semantics.
@@ -171,6 +175,7 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		Collection<ReplayState<C>> finalStates = new TreeSet<ReplayState<C>>();
 		initialStates.add(initialState);
 
+		
 		/*
 		 * Initialize the MultiThreadedSearcher.
 		 * 
@@ -180,9 +185,27 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		ReplayStateExpander<C> expander = new ReplayStateExpander<C>(settings, net, semantics, map, addOperator);
 		MultiThreadedSearcher<ReplayState<C>> searcher = new MultiThreadedSearcher<ReplayState<C>>(expander,
 				new ExpandCollection<ReplayState<C>>() {
-					private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>();
+					private final TreeSet<ReplayState<C>> states = new TreeSet<ReplayState<C>>(new Comparator<ReplayState<C>>(){
+
+						@Override
+						public int compare(ReplayState<C> o1, ReplayState<C> o2) {
+							int c = o1.cost.compareTo(o2.cost);
+							if(c==0){
+								if(o1.trace.size()>o2.trace.size()){
+									return 1;
+								}else{
+									return 0;
+								}
+								
+							}
+							return c;
+						}
+						
+						
+					});
 
 					public void add(Collection<? extends ReplayState<C>> newElements) {
+						
 						states.addAll(newElements);
 					}
 
@@ -193,6 +216,13 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 					public ReplayState<C> pop() {
 						ReplayState<C> head = states.first();
 						states.remove(head);
+						
+						//System.out.println("Cost: "+head.cost+" Marking: "+head.marking);
+                        //System.out.println("Trace: "+head.trace);//+head.transition);
+                        //System.out.println("TRans: "+head.transition);//+head.transition);
+                        //System.out.println(states);
+						
+						
 						return head;
 					}
 				});
@@ -207,6 +237,8 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 		 * Search is done. Check the results.
 		 */
 		ArrayList<Transition> sequence = null;
+		
+		
 		if (expander.bestState.cost.compareTo(settings.getMaximalCost()) < 0) {
 			/*
 			 * Found a solution, construct the transition sequence and return
