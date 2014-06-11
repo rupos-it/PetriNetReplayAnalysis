@@ -106,7 +106,7 @@ public class ReplayPerformancePlugin {
 
 		Replayer<ReplayFitnessCost> replayer = new Replayer<ReplayFitnessCost>(context, net, semantics, map,
 				ReplayFitnessCost.addOperator);
-
+		setting.setMaximalCost(550);
 		int replayedTraces = 0;
 		context.getProgress().setMinimum(0);
 		context.getProgress().setMaximum(log.size());

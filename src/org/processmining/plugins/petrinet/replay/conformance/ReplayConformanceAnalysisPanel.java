@@ -77,7 +77,7 @@ public class ReplayConformanceAnalysisPanel extends JPanel{
 		  stringpanel = new StringInteractivePanel(netPNView, "Data_Result", UItotalResult(tovisualize));
 		 netPNView.addViewInteractionPanel(stringpanel, SwingConstants.SOUTH);
 			
-		 tabpanel = new TabTraceConformancePanel(netPNView, "Change_Trace", tovisualize,this);
+		 tabpanel = new TabTraceConformancePanel(netPNView, "Change_Trace", tovisualize,this,log);
 			netPNView.addViewInteractionPanel(tabpanel, SwingConstants.SOUTH);
 			
 		 

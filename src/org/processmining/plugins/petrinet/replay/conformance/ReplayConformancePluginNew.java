@@ -136,7 +136,7 @@ public class ReplayConformancePluginNew {
 									if (tt == StepTypes.MINVI
 											& tt1 == StepTypes.MINVI) {
 										i=i+2;
-										x=x+1;
+										x=x+2;
 									}
 								}
 

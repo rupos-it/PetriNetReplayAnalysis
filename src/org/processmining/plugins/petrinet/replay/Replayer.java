@@ -190,15 +190,22 @@ public class Replayer<C extends ReplayCost & Comparable<? super C>> {
 						@Override
 						public int compare(ReplayState<C> o1, ReplayState<C> o2) {
 							int c = o1.cost.compareTo(o2.cost);
-							if(c==0){
-								if(o1.trace.size()>o2.trace.size()){
+							if(c!=0)
+								return c;
+							int u = o1.compareTo(o2);
+							/*if(c==0){
+								if(o1.marking.size()>o2.marking.size()){
 									return 1;
 								}else{
+									if(o1.marking.size()<o2.marking.size()){
+										return -1;
+									}else{
 									return 0;
+									}
 								}
 								
-							}
-							return c;
+							}*/
+							return u;
 						}
 						
 						

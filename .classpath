@@ -20,6 +20,7 @@
 	<classpathentry kind="lib" path="stdlib/freehep-graphicsio-ps-2.1.1.jar"/>
 	<classpathentry kind="lib" path="stdlib/freehep-graphicsio-svg-2.1.1.jar"/>
 	<classpathentry kind="lib" path="stdlib/freehep-graphicsio-swf-2.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Widgets"/>
 	<classpathentry kind="lib" path="stdlib/freehep-graphicsio-tests-2.1.1.jar"/>
 	<classpathentry kind="lib" path="stdlib/freehep-io-2.0.2.jar"/>
 	<classpathentry kind="lib" path="stdlib/freehep-swing-2.0.3.jar"/>
@@ -61,5 +62,9 @@
 	<classpathentry kind="lib" path="packagelib/InteractiveVisualization.jar"/>
 	<classpathentry kind="lib" path="packagelib/LogMerge.jar"/>
 	<classpathentry kind="lib" path="stdlib/EfficientStorage.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PNetReplayer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TraceAlignment"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PNetAlignmentAnalysis"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TraceAlignmentWithGuideTree"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

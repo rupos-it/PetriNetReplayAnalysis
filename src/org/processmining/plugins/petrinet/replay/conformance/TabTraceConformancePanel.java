@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -27,9 +28,17 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.deckfour.xes.info.XLogInfo;
+import org.deckfour.xes.info.XLogInfoFactory;
+import org.deckfour.xes.model.XLog;
 import org.processmining.framework.util.ui.scalableview.ScalableComponent;
 import org.processmining.framework.util.ui.scalableview.ScalableViewPanel;
 import org.processmining.framework.util.ui.scalableview.interaction.ViewInteractionPanel;
+import org.processmining.framework.util.ui.widgets.Inspector;
+import org.processmining.framework.util.ui.widgets.InspectorPanel;
+import org.processmining.framework.util.ui.widgets.ProMPropertiesPanel;
+import org.processmining.framework.util.ui.widgets.ProMTextArea;
+import org.processmining.plugins.log.ui.logdialog.ProcessInstanceView;
 
 import com.fluxicon.slickerbox.components.AutoFocusButton;
 import com.fluxicon.slickerbox.factory.SlickerDecorator;
@@ -53,18 +62,19 @@ public class TabTraceConformancePanel extends JPanel implements MouseListener, M
 	private JTable tab;
 	private String panelName;
 	private TotalConformanceResult tovisualize;
-	
+	private XLog log;
 	private ReplayConformanceAnalysisPanel replayRuposPanel;
+	private  InspectorPanel inspector;
 	
 	
 	public TabTraceConformancePanel(ScalableViewPanel panel, String panelName,
-			TotalConformanceResult tpr , ReplayConformanceAnalysisPanel replayPRP){
+			TotalConformanceResult tpr , ReplayConformanceAnalysisPanel replayPRP, XLog lg){
 		super(new BorderLayout());
 
 		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setOpaque(true);
 		this.setSize(new Dimension(160, 260));
-
+		this.log=lg;
 		this.addMouseMotionListener(this);
 		this.addMouseListener(this);
 
@@ -73,9 +83,34 @@ public class TabTraceConformancePanel extends JPanel implements MouseListener, M
 		this.tovisualize=tpr;
 		
 		replayRuposPanel=replayPRP;
+		inspector = new InspectorPanel();
+		 replayRuposPanel.add(inspector);
 		painttabtrace();
 	}
 	
+	private void widget(int index){
+
+		 XLogInfo info = null;
+		 info = XLogInfoFactory.createLogInfo(log);
+		 ProcessInstanceView instanceView = new ProcessInstanceView(log.get(index), info);
+		 instanceView.setAlignmentX(LEFT_ALIGNMENT);
+			JPanel comprisePanel = new JPanel();
+			comprisePanel.setAlignmentX(LEFT_ALIGNMENT);
+			comprisePanel.setBorder(BorderFactory.createEmptyBorder());
+			comprisePanel.setOpaque(false);
+			comprisePanel.setLayout(new BoxLayout(comprisePanel, BoxLayout.X_AXIS));
+			comprisePanel.add(instanceView);
+			comprisePanel.add(Box.createHorizontalGlue());
+			
+		 // inspector = new InspectorPanel();
+			inspector.removeInfoAll(0);
+		  inspector.addInfo("Log", comprisePanel);
+		 
+		
+		
+		//, "0, 0");
+		
+	}
 
 	private void painttabtrace() {
 
@@ -194,6 +229,7 @@ public class TabTraceConformancePanel extends JPanel implements MouseListener, M
 				int i=tab.getSelectedRow();
 				if(i>=0){
 					replayRuposPanel.onerepaint(i);
+					widget(i);
 				}
 				
 			}
